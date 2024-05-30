@@ -1,29 +1,37 @@
 from datetime import datetime, timedelta
-from server.utils.distance import distance
-from beanie import Document
-from pydantic import BaseModel
+from typing import List, Optional
+from pydantic import BaseModel, Field
+from beanie import Document, PydanticObjectId
+
+
+
+class Point(BaseModel):
+    type: str = Field("Point", const=True)
+    coordinates: List[float]
 
 
 class Shop(Document):
     owner_id: str = ""
     name: str
-    longitude: float
-    latitude: float
-    flavors: list[str] = []
+    location: Point
+    flavors: List[str] = []
     card_payment: bool = False
     is_open_today: bool = True
     start_time: str
     end_time: str
+    distance: Optional[float]
 
     class Settings:
-        name = "shops"
+        collection = "shops"
 
     class Config:
         schema_extra = {
             "example": {
                 "name": "Pretzel Shop",
-                "longitude": 19.915122985839847,
-                "latitude": 50.086776271666096,
+                "location": {
+                    "type": "Point",
+                    "coordinates": [50.086776271666096,19.915122985839847]
+                },
                 "flavors": ["Sezam", "Mak"],
                 "card_payment": True,
                 "is_open_today": True,
@@ -31,14 +39,6 @@ class Shop(Document):
                 "end_time": "16:00",
             }
         }
-
-    def filter_by_distance(self, localization: tuple[float, float], radius: float) -> list["Shop"]:
-        return self.all(limit=5).to_list()
-        pass
-
-    def filter_n_nearest(self, localization: tuple[float, float], n: int) -> list["Shop"]:
-        pass
-
 
 class ShopsByDistance(BaseModel):
     lat: float
@@ -48,23 +48,22 @@ class ShopsByDistance(BaseModel):
     class Config:
         schema_extra = {
             "example": {
-                "lat": 123.456,
-                "long": 123.456,
+                "lat": 50.086776271666096,
+                "long": 19.915122985839847,
                 "r": 5,
             }
         }
 
-
 class ShopsByNumber(BaseModel):
-    n: int
     lat: float
     long: float
+    n: int
 
     class Config:
         schema_extra = {
             "example": {
-                "lat": 123.456,
-                "long": 123.456,
+                "lat": 50.086776271666096,
+                "long": 19.915122985839847   ,
                 "n": 5,
             }
         }
