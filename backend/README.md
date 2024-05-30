@@ -1,14 +1,18 @@
 ## How to setup
 
+### First create a virtual environment with
+
 ```sh
 python -m venv venv
 ```
 
-lub
+or
 
 ```sh
 python3 -m venv venv
 ```
+
+### Then activate the virtual environment with
 
 On Windows
 
@@ -22,13 +26,13 @@ On Unix or MacOS
 source venv/bin/activate
 ```
 
-Then install the dependencies with
+### Then install the dependencies with
 
 ```sh
 pip install -r requirements.txt
 ```
 
-## Then run app with
+## Finally run app with
 
 ```
 uvicorn main:app --reload
