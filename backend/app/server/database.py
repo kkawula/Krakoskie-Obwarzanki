@@ -9,11 +9,9 @@ async def init():
     load_dotenv()
 
     MONGO_URL = os.getenv("MONGO_URL")
-
     DB_NAME = os.getenv("DB_NAME")
 
     client = motor.motor_asyncio.AsyncIOMotorClient(MONGO_URL)
-
     database = client.get_database(DB_NAME)
 
     await init_beanie(database=database, document_models=[Shop])

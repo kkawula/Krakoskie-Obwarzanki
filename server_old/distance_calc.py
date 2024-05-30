@@ -26,13 +26,3 @@ def distance(shops: dict[int, tuple[float, float]], localization: tuple[float, f
     if radius:
         shops_list = list(filter(lambda x: x[1] <= radius, shops_list))
     return shops_list[:number_of_output]
-
-
-# loc1 = (50.061389, 19.938333)
-# loc2 = (50.065723, 19.919415)
-# loc3 = (50.064718, 19.945654)
-
-# shop_dict = {1: loc1, 2: loc2, 3: loc3}
-# localization = (50, 19)
-
-# print(distance(shop_dict, localization,radius=100))
