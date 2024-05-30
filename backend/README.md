@@ -4,6 +4,12 @@
 python -m venv venv
 ```
 
+lub
+
+```sh
+python3 -m venv venv
+```
+
 On Windows
 
 ```sh
