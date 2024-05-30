@@ -4,9 +4,12 @@ from models.shop import Shop
 from models.user import User
 from models.queries import *
 
+
+
 router = APIRouter()
 
 repo = Repository()
+
 
 
 @router.get("/")

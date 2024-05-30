@@ -19,7 +19,7 @@ source venv/bin/activate
 Then install the dependencies with
 
 ```sh
-pip install -r req.txt
+pip install -r requirements.txt
 ```
 
 ## Then run app with

@@ -30,13 +30,15 @@ class Repository:
     #         "endTime": shop["endTime"]
     #     }
     def mapToShop(self, shop: dict) -> dict:
-        shop["id"] = str(shop["_id"])
-        del shop["_id"]
+        # shop["id"] = str(shop["_id"])
+        # del shop["_id"]
         return shop
+        
 
     def get_all_shops(self) -> list[dict]:
-        shops = list(self.shops.find())
-        shops = list(map(self.mapToShop, shops))
+        shops_coursor = self.shops.find()
+        print(shops_coursor[0])
+        shops = list(map(self.mapToShop,shops_coursor ))
         return shops
 
     def get_shop_by_id(self, id) -> dict:
