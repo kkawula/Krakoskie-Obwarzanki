@@ -1,10 +1,9 @@
 from fastapi import FastAPI
 from fastapi.responses import RedirectResponse
 from fastapi.middleware.cors import CORSMiddleware
-from bson.son import SON
 
 from server.database import init
-from server.models.shop import Shop, ShopsByDistance, ShopsByNumber
+from server.models.shop import Shop, ShopsByDistance, ShopsByNumber,Point,ShopWithDistance
 
 app = FastAPI()
 
@@ -51,45 +50,38 @@ async def get_shop(shop_id: str):
 
 @app.post("/shops/by_distance", tags=["Shops"])
 async def get_shops_by_dist(query: ShopsByDistance):
-    r = query.r
-    lat = query.lat
-    long = query.long
+    radius = query.r
+    point = Point(coordinates=[query.lat,query.long])
 
-    geo_near_stage = {
-        "$geoNear": {
-            "near": {
-                "type": "Point",
-                "coordinates": [lat, long]
-            },
-            "spherical": True,
-            "distanceField": "distance",
-            "maxDistance": r
+    result = await Shop.aggregate(
+    [
+        {
+            "$geoNear": {
+                "near": point.dict(),
+                "distanceField": "distance",
+                "maxDistance": radius,
+            }
         }
-    }
+    ]
+    ).to_list()
 
-    result = await Shop.get_motor_collection().aggregate([geo_near_stage]).to_list(None)
-
-    shops = [Shop(**doc) for doc in result]
+    shops = [ShopWithDistance(latitude=doc['location']['coordinates'][0], longitude=doc['location']['coordinates'][1], **doc) for doc in result]
     return [shop.dict() for shop in shops]
 
 @app.post("/shops/by_number", tags=["Shops"])
 async def get_n_nearest_shops(query: ShopsByNumber):
     n = query.n
-    lat = query.lat
-    long = query.long
+    point = Point(coordinates=[query.lat,query.long])
 
-    geo_near_stage = {
-        "$geoNear": {
-            "near": {
-                "type": "Point",
-                "coordinates": [lat,long]
-            },
-            "spherical": True,
-            "distanceField": "distance",
+    result = await Shop.aggregate(
+    [
+        {
+            "$geoNear": {
+                "near": point.dict(),
+                "distanceField": "distance",
+            }
         }
-    }
+    ]
+    ).to_list(n)
 
-    result = await Shop.get_motor_collection().aggregate([geo_near_stage]).to_list(n)
-
-    shops = [Shop(**doc) for doc in result]
-    return [shop.dict() for shop in shops]
+    return [ShopWithDistance(**doc) for doc in result]

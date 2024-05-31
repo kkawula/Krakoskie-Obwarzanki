@@ -1,14 +1,12 @@
-from datetime import datetime, timedelta
-from typing import List, Optional
-from pydantic import BaseModel, Field
-from beanie import Document, PydanticObjectId
-
+from typing import List, Optional, Tuple
+from enum import Enum
+from pydantic import BaseModel,Field
+from beanie import Document
 
 
 class Point(BaseModel):
     type: str = Field("Point", const=True)
-    coordinates: List[float]
-
+    coordinates: Tuple[float,float]
 
 class Shop(Document):
     owner_id: str = ""
@@ -19,10 +17,12 @@ class Shop(Document):
     is_open_today: bool = True
     start_time: str
     end_time: str
-    distance: Optional[float]
 
     class Settings:
-        collection = "shops"
+        name = "shops"
+        indexes = [
+            [("location", "2dsphere")],  # GEO index
+        ]
 
     class Config:
         schema_extra = {
@@ -40,6 +40,11 @@ class Shop(Document):
             }
         }
 
+class ShopWithDistance(Shop):
+    latitude: float
+    longitude: float
+    distance: float
+
 class ShopsByDistance(BaseModel):
     lat: float
     long: float
@@ -50,7 +55,7 @@ class ShopsByDistance(BaseModel):
             "example": {
                 "lat": 50.086776271666096,
                 "long": 19.915122985839847,
-                "r": 5,
+                "r": 5000,
             }
         }
 
