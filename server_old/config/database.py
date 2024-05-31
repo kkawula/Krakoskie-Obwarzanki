@@ -1,6 +1,7 @@
 import os
-from pymongo import MongoClient
+
 from dotenv import load_dotenv
+from pymongo import MongoClient
 
 
 def init_db():
@@ -15,6 +16,6 @@ def init_db():
     client = MongoClient(MONGO_URL)
     database = client.get_database("pretzelShop")
     shops = database["shops"]
-    
+
     users = database["users"]
     return shops, users

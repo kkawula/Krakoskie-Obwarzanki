@@ -1,8 +1,9 @@
-from datetime import datetime, timedelta
-from typing import List, Optional
-from pydantic import BaseModel, Field
-from beanie import Document, PydanticObjectId
+from typing import List
+from typing import Optional
 
+from beanie import Document
+from pydantic import BaseModel
+from pydantic import Field
 
 
 class Point(BaseModel):
@@ -30,7 +31,7 @@ class Shop(Document):
                 "name": "Pretzel Shop",
                 "location": {
                     "type": "Point",
-                    "coordinates": [50.086776271666096,19.915122985839847]
+                    "coordinates": [50.086776271666096, 19.915122985839847],
                 },
                 "flavors": ["Sezam", "Mak"],
                 "card_payment": True,
@@ -39,6 +40,7 @@ class Shop(Document):
                 "end_time": "16:00",
             }
         }
+
 
 class ShopsByDistance(BaseModel):
     lat: float
@@ -54,6 +56,7 @@ class ShopsByDistance(BaseModel):
             }
         }
 
+
 class ShopsByNumber(BaseModel):
     lat: float
     long: float
@@ -63,7 +66,7 @@ class ShopsByNumber(BaseModel):
         schema_extra = {
             "example": {
                 "lat": 50.086776271666096,
-                "long": 19.915122985839847   ,
+                "long": 19.915122985839847,
                 "n": 5,
             }
         }

@@ -1,10 +1,7 @@
-from distance_calc import distance
-
-from config.database import init_db
-
-from models.shop import Shop
-from models.user import User
 from bson import ObjectId
+from config.database import init_db
+from distance_calc import distance
+from models.shop import Shop
 
 # longitude: str # x coordinate
 #     latitude: str # y coordinate
@@ -33,12 +30,11 @@ class Repository:
         # shop["id"] = str(shop["_id"])
         # del shop["_id"]
         return shop
-        
 
     def get_all_shops(self) -> list[dict]:
         shops_coursor = self.shops.find()
         print(shops_coursor[0])
-        shops = list(map(self.mapToShop,shops_coursor ))
+        shops = list(map(self.mapToShop, shops_coursor))
         return shops
 
     def get_shop_by_id(self, id) -> dict:
@@ -54,10 +50,14 @@ class Repository:
         return serialized
 
     def filter_by_distance(self, shops, localization, radius=5):
-        return self.get_shops_data(distance(self.list_serial(shops), localization, radius=radius))
+        return self.get_shops_data(
+            distance(self.list_serial(shops), localization, radius=radius)
+        )
 
     def filter_n_nearest(self, shops, localization, n):
-        return self.get_shops_data(distance(self.list_serial(shops), localization, number_of_output=n))
+        return self.get_shops_data(
+            distance(self.list_serial(shops), localization, number_of_output=n)
+        )
 
     def get_shops_data(self, filtered_shops):
         list_of_shops = []
