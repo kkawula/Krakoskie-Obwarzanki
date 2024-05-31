@@ -10,7 +10,14 @@ async def init():
     load_dotenv()
 
     MONGO_URL = os.getenv("MONGO_URL")
+
+    if not MONGO_URL:
+        raise ValueError("You must set the MONGO_URL environment variable")
+
     DB_NAME = os.getenv("DB_NAME")
+
+    if not DB_NAME:
+        raise ValueError("You must set the DB_NAME environment variable")
 
     client = motor.motor_asyncio.AsyncIOMotorClient(MONGO_URL)
     database = client.get_database(DB_NAME)
