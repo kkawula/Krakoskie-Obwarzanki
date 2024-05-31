@@ -84,4 +84,5 @@ async def get_n_nearest_shops(query: ShopsByNumber):
     ]
     ).to_list(n)
 
-    return [ShopWithDistance(**doc) for doc in result]
+    shops = [ShopWithDistance(latitude=doc['location']['coordinates'][0], longitude=doc['location']['coordinates'][1], **doc) for doc in result]
+    return [shop.dict() for shop in shops]
