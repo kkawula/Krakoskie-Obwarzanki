@@ -75,3 +75,9 @@ Teraz pre-commit będzie działać przed każdym commitowaniem.
 #### Jak to działa?
 
 Pre-commit sprawdza czy kod spełnia pewne wymagania przed commitowaniem. Jeśli nie spełnia, to commit nie zostanie zrobiony, ale hooki zrobią odpowiedni refactor kodu. Wprowadzone zmiany należy znowu dodać do stash i ponownie zrobić commit. Wymagania są zdefiniowane w pliku `.pre-commit-config.yaml`.
+
+Jeśli z jakiegoś powodu chcesz zrobić commit bez sprawdzania, to możesz użyć flagi `--no-verify`.
+
+```sh
+git commit --no-verify -m "Wiadomość"
+```
