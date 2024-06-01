@@ -1,39 +1,83 @@
-## How to setup
+## Setup backendu
 
-### First create a virtual environment with
+### Wirtualne środowisko
 
 ```sh
 python -m venv venv
 ```
 
-or
+lub
 
 ```sh
 python3 -m venv venv
 ```
 
-### Then activate the virtual environment with
+Potem aktywuj wirtualne środowisko
 
-On Windows
-
-```sh
-venv\Scripts\activate
-```
-
-On Unix or MacOS
+Unix/MacOS:
 
 ```sh
 source venv/bin/activate
 ```
 
-### Then install the dependencies with
+Windows:
+
+```sh
+venv\Scripts\activate
+```
+
+### Instalacja bibliotek
 
 ```sh
 pip install -r requirements.txt
 ```
 
-## Finally run app with
+lub
+
+```sh
+make install
+```
+
+### Uruchomienie serwera
 
 ```
 uvicorn main:app --reload
+```
+
+lub
+
+```
+make server
+```
+
+### Pre-commit
+
+Aby pre-commit działał poprawnie, musisz zainstalować pre-commit.
+
+```sh
+pip install -r requirements-dev.txt
+```
+
+lub
+
+```sh
+make install-dev
+```
+
+Następnie zainstaluj pre-commit (należy to zrobić tylko raz)
+
+```sh
+pre-commit install
+```
+
+Teraz pre-commit będzie działać przed każdym commitowaniem.
+
+#### Jak to działa?
+
+Pre-commit sprawdza czy kod spełnia pewne wymagania przed commitowaniem. Jeśli nie spełnia, to commit nie zostanie zrobiony, ale hooki zrobią odpowiedni refactor kodu. Wprowadzone zmiany należy znowu dodać do stash i ponownie zrobić commit. Wymagania są zdefiniowane w pliku `.pre-commit-config.yaml`.
+
+Jeśli z jakiegoś powodu chcesz zrobić commit bez sprawdzania, to możesz użyć flagi `--no-verify`.
+
+```sh
+git commit --no-verify -m "Wiadomość"
 ```

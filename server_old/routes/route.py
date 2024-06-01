@@ -1,15 +1,14 @@
-from fastapi import APIRouter, HTTPException
-from schema.schemas import Repository
+from fastapi import APIRouter
+from fastapi import HTTPException
+from models.queries import *
 from models.shop import Shop
 from models.user import User
-from models.queries import *
-
+from schema.schemas import Repository
 
 
 router = APIRouter()
 
 repo = Repository()
-
 
 
 @router.get("/")
@@ -28,7 +27,8 @@ async def get_shops_by_dist(query: ShopsByDistance):
     lat = query.lat
     long = query.long
     shops = repo.filter_by_distance(
-        repo.get_all_shops(), localization=(lat, long), radius=r)
+        repo.get_all_shops(), localization=(lat, long), radius=r
+    )
     return shops
 
 
@@ -37,8 +37,7 @@ async def get_n_nearest_shops(query: ShopsByNumber):
     n = query.n
     lat = query.lat
     long = query.long
-    shops = repo.filter_n_nearest(
-        repo.get_all_shops(), localization=(lat, long), n=n)
+    shops = repo.filter_n_nearest(repo.get_all_shops(), localization=(lat, long), n=n)
     return shops
 
 
@@ -48,6 +47,7 @@ async def get_n_nearest_shops(query: ShopsByNumber):
 
 # @router.post("/login/")
 # async def login(username: str, password: str):
+
 
 @router.post("/register")
 async def register(user: User):
@@ -60,8 +60,7 @@ async def register(user: User):
 async def login(user: User):
     stored_user = users_collection.find_one({"username": user.username})
     if not stored_user or stored_user["password"] != user.password:
-        raise HTTPException(
-            status_code=401, detail="Invalid username or password")
+        raise HTTPException(status_code=401, detail="Invalid username or password")
     return {"message": "Login successful"}
 
 

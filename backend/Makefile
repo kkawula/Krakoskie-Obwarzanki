@@ -1,6 +1,8 @@
 server:
 	python app/main.py
+
 install:
 	pip install -r requirements.txt
-venv:
-	source venv/bin/activate
+
+install-dev:
+	pip install -r requirements-dev.txt
