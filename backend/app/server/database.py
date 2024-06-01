@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 from server.models.shop import Shop
 
 
-async def init():
+async def init_db():
     load_dotenv()
 
     MONGO_URL = os.getenv("MONGO_URL")

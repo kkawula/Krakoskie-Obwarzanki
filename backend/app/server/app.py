@@ -1,10 +1,10 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse
-from server.database import init
-from server.models.shop import Shop
-from server.models.shop import ShopsByDistance
-from server.models.shop import ShopsByNumber
+from server.database import init_db
+from server.models.shop import Shop, ShopWithDistance, ShopWithPosition
+from server.models.query import Query
+from server.models.utils import Point
 
 app = FastAPI()
 
@@ -25,7 +25,7 @@ app.add_middleware(
 
 @app.on_event("startup")
 async def start_db():
-    await init()
+    await init_db()
 
 
 @app.get("/", tags=["Root"])
@@ -33,59 +33,53 @@ async def root():
     return RedirectResponse(url="/docs")
 
 
-@app.get("/shops", tags=["Shops"])
+@app.get("/shops", tags=["Shops"], response_model=list[ShopWithPosition])
 async def all_shops():
-    return await Shop.all().to_list()
+    shops = await Shop.all().to_list()
+    return shops
 
 
-@app.post("/shops", tags=["Shops"])
+@app.post("/shops", tags=["Shops"], response_model=ShopWithPosition)
 async def create_shop(shop: Shop):
     await shop.insert()
     return shop
 
 
-@app.get("/shops/{shop_id}", tags=["Shops"])
+@app.get("/shops/{shop_id}", tags=["Shops"], response_model=ShopWithPosition)
 async def get_shop(shop_id: str):
     shop = await Shop.get(shop_id)
     return shop
 
 
-@app.post("/shops/by_distance", tags=["Shops"])
-async def get_shops_by_dist(query: ShopsByDistance):
-    r = query.r
-    lat = query.lat
-    long = query.long
+@app.post("/shops/by_distance", tags=["Shops"], response_model=list[ShopWithDistance])
+async def get_shops_by_dist(query: Query.ShopsByDistance):
+    radius = query.radius
+    point = Point(**query.dict())
 
-    geo_near_stage = {
-        "$geoNear": {
-            "near": {"type": "Point", "coordinates": [lat, long]},
-            "spherical": True,
-            "distanceField": "distance",
-            "maxDistance": r,
-        }
-    }
+    return await Shop.aggregate(
+        [
+            {
+                "$geoNear": {
+                    "near": point.dict(),
+                    "distanceField": "distance",
+                    "maxDistance": radius,
+                }
+            }
+        ], projection_model=ShopWithDistance
+    ).to_list()
 
-    result = await Shop.get_motor_collection().aggregate([geo_near_stage]).to_list(None)
+@app.post("/shops/by_number", tags=["Shops"], response_model=list[ShopWithDistance])
+async def get_n_nearest_shops(query: Query.ShopsByNumber):
+    n = query.n_closest
+    point = Point(**query.dict())
 
-    shops = [Shop(**doc) for doc in result]
-    return [shop.dict() for shop in shops]
-
-
-@app.post("/shops/by_number", tags=["Shops"])
-async def get_n_nearest_shops(query: ShopsByNumber):
-    n = query.n
-    lat = query.lat
-    long = query.long
-
-    geo_near_stage = {
-        "$geoNear": {
-            "near": {"type": "Point", "coordinates": [lat, long]},
-            "spherical": True,
-            "distanceField": "distance",
-        }
-    }
-
-    result = await Shop.get_motor_collection().aggregate([geo_near_stage]).to_list(n)
-
-    shops = [Shop(**doc) for doc in result]
-    return [shop.dict() for shop in shops]
+    return await Shop.aggregate(
+        [
+            {
+                "$geoNear": {
+                    "near": point.dict(),
+                    "distanceField": "distance",
+                }
+            }
+        ], projection_model=ShopWithDistance
+    ).to_list(n)

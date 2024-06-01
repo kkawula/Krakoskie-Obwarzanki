@@ -3,8 +3,8 @@ import { useEffect, useState } from "react";
 interface Seller {
   id: string;
   name: string;
-  longitude: number;
-  latitude: number;
+  lng: number;
+  lat: number;
   card_payment: boolean;
   flavors: string[];
   distance: number;
@@ -17,8 +17,8 @@ export default function PretzelList() {
     try {
       const body = JSON.stringify({
         lat: 50.048774,
-        long: 19.965303,
-        r: 1000000,
+        lng: 19.965303,
+        radius: 1000000,
       });
       const response = await fetch(`http://127.0.0.1:8000/shops/by_distance/`, {
         method: "POST",
@@ -52,7 +52,7 @@ export default function PretzelList() {
               <Text fontSize="s" fontWeight="bold" marginRight={3}>
                 {`${seller.name}`}
               </Text>
-              <Text>{`${seller.distance.toFixed(2)} km`}</Text>
+              <Text>{`${(seller.distance / 1000).toFixed(2)} km`}</Text>
             </Flex>
             <Flex direction="row">
               {seller.flavors.map((flavor, index) => {

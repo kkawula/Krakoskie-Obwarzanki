@@ -1,14 +1,9 @@
 from typing import List
-from typing import Optional
-
+from pydantic import root_validator
 from beanie import Document
-from pydantic import BaseModel
-from pydantic import Field
 
+from server.models.utils import Point
 
-class Point(BaseModel):
-    type: str = Field("Point", const=True)
-    coordinates: List[float]
 
 
 class Shop(Document):
@@ -20,10 +15,19 @@ class Shop(Document):
     is_open_today: bool = True
     start_time: str
     end_time: str
-    distance: Optional[float]
+
+    @root_validator(pre=True)
+    def set_location(cls, values):
+        if not values.get('location'):
+            values['location'] = Point(**values)
+        return values
 
     class Settings:
-        collection = "shops"
+        name = "shops"
+        indexes = [
+            [("location", "2dsphere")],  # GEO index
+        ]
+
 
     class Config:
         schema_extra = {
@@ -42,31 +46,27 @@ class Shop(Document):
         }
 
 
-class ShopsByDistance(BaseModel):
+class ShopWithPosition(Shop):
     lat: float
-    long: float
-    r: float
+    lng: float
 
-    class Config:
-        schema_extra = {
-            "example": {
-                "lat": 50.086776271666096,
-                "long": 19.915122985839847,
-                "r": 5,
-            }
-        }
+    @root_validator(pre=True)
+    def set_location(cls, values):
+        """
+        Sets the latitude and longitude values based on the location coordinates, when the model is created.
+
+        Args:
+            values (dict): The input values for the model.
+
+        Returns:
+            dict: The updated values with latitude and longitude set.
+        """
+        location = values.get('location')
+        if location:
+            values['lng'] = location['coordinates'][0]
+            values['lat'] = location['coordinates'][1]
+        return values
 
 
-class ShopsByNumber(BaseModel):
-    lat: float
-    long: float
-    n: int
-
-    class Config:
-        schema_extra = {
-            "example": {
-                "lat": 50.086776271666096,
-                "long": 19.915122985839847,
-                "n": 5,
-            }
-        }
+class ShopWithDistance(ShopWithPosition):
+    distance: float

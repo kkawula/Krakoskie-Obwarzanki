@@ -6,8 +6,8 @@ import { createContext, useEffect, useState } from "react";
 export interface IMarker {
   id: string;
   name: string;
-  longitude: number;
-  latitude: number;
+  lng: number;
+  lat: number;
   card_payment: boolean;
   flavors: string[];
 }
@@ -65,11 +65,7 @@ export default function Map() {
         <LocationMarker />
       </MarkerSetter.Provider>
       {markers.map((marker, index) => (
-        <Marker
-          key={index}
-          position={{ lng: marker.longitude, lat: marker.latitude }}
-          icon={customIcon}
-        >
+        <Marker key={index} position={{ ...marker }} icon={customIcon}>
           <Popup>{marker.name}</Popup>
         </Marker>
       ))}
