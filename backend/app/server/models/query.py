@@ -6,7 +6,7 @@ class Query:
         lat: float
         lng: float
 
-    class ShopsByDistanceQuery(ShopLocation):
+    class ShopsByDistance(ShopLocation):
         radius: float
 
         class Config:

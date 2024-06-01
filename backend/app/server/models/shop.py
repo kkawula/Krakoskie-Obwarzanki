@@ -15,7 +15,6 @@ class Shop(Document):
     is_open_today: bool = True
     start_time: str
     end_time: str
-    distance: Optional[float]
 
     @root_validator(pre=True)
     def set_location(cls, values):
