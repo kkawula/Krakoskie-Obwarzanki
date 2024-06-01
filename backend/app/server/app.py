@@ -3,7 +3,9 @@ from fastapi.responses import RedirectResponse
 from fastapi.middleware.cors import CORSMiddleware
 
 from server.database import init
-from server.models.shop import Shop, ShopsByDistance, ShopsByNumber,Point,ShopWithDistance
+from server.models.shop import Shop, ShopWithDistance
+from server.models.query import Query
+from server.models.utils import Point
 
 app = FastAPI()
 
@@ -48,41 +50,40 @@ async def get_shop(shop_id: str):
     shop = await Shop.get(shop_id)
     return shop
 
+
 @app.post("/shops/by_distance", tags=["Shops"])
-async def get_shops_by_dist(query: ShopsByDistance):
+async def get_shops_by_dist(query: Query.ShopsByDistanceQuery):
     radius = query.r
-    point = Point(coordinates=[query.lat,query.long])
+    point = Point(coordinates=[query.lat, query.long])
 
-    result = await Shop.aggregate(
-    [
-        {
-            "$geoNear": {
-                "near": point.dict(),
-                "distanceField": "distance",
-                "maxDistance": radius,
+    shops = await Shop.aggregate(
+        [
+            {
+                "$geoNear": {
+                    "near": point.dict(),
+                    "distanceField": "distance",
+                    "maxDistance": radius,
+                }
             }
-        }
-    ]
+        ], projection_model=ShopWithDistance
     ).to_list()
+    return shops
 
-    shops = [ShopWithDistance(latitude=doc['location']['coordinates'][0], longitude=doc['location']['coordinates'][1], **doc) for doc in result]
-    return [shop.dict() for shop in shops]
 
 @app.post("/shops/by_number", tags=["Shops"])
-async def get_n_nearest_shops(query: ShopsByNumber):
+async def get_n_nearest_shops(query: Query.ShopsByNumber):
     n = query.n
-    point = Point(coordinates=[query.lat,query.long])
+    point = Point(coordinates=[query.lat, query.long])
 
-    result = await Shop.aggregate(
-    [
-        {
-            "$geoNear": {
-                "near": point.dict(),
-                "distanceField": "distance",
+    shops = await Shop.aggregate(
+        [
+            {
+                "$geoNear": {
+                    "near": point.dict(),
+                    "distanceField": "distance",
+                }
             }
-        }
-    ]
+        ], projection_model=ShopWithDistance
     ).to_list(n)
 
-    shops = [ShopWithDistance(latitude=doc['location']['coordinates'][0], longitude=doc['location']['coordinates'][1], **doc) for doc in result]
-    return [shop.dict() for shop in shops]
+    return shops

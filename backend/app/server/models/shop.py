@@ -1,12 +1,9 @@
-from typing import List, Optional, Tuple
-from enum import Enum
-from pydantic import BaseModel,Field
+from typing import List
+from pydantic import root_validator
 from beanie import Document
 
+from server.models.utils import Point
 
-class Point(BaseModel):
-    type: str = Field("Point", const=True)
-    coordinates: Tuple[float,float]
 
 class Shop(Document):
     owner_id: str = ""
@@ -30,7 +27,7 @@ class Shop(Document):
                 "name": "Pretzel Shop",
                 "location": {
                     "type": "Point",
-                    "coordinates": [50.086776271666096,19.915122985839847]
+                    "coordinates": [50.086776271666096, 19.915122985839847]
                 },
                 "flavors": ["Sezam", "Mak"],
                 "card_payment": True,
@@ -40,35 +37,25 @@ class Shop(Document):
             }
         }
 
+
 class ShopWithDistance(Shop):
     latitude: float
     longitude: float
     distance: float
 
-class ShopsByDistance(BaseModel):
-    lat: float
-    long: float
-    r: float
+    @root_validator(pre=True)
+    def set_lat_long(cls, values):
+        """
+        Sets the latitude and longitude values based on the location coordinates, when the model is created.
 
-    class Config:
-        schema_extra = {
-            "example": {
-                "lat": 50.086776271666096,
-                "long": 19.915122985839847,
-                "r": 5000,
-            }
-        }
+        Args:
+            values (dict): The input values for the model.
 
-class ShopsByNumber(BaseModel):
-    lat: float
-    long: float
-    n: int
-
-    class Config:
-        schema_extra = {
-            "example": {
-                "lat": 50.086776271666096,
-                "long": 19.915122985839847   ,
-                "n": 5,
-            }
-        }
+        Returns:
+            dict: The updated values with latitude and longitude set.
+        """
+        location = values.get('location')
+        if location:
+            values['latitude'] = location['coordinates'][0]
+            values['longitude'] = location['coordinates'][1]
+        return values
