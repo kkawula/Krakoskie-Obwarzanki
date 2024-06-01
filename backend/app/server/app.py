@@ -65,8 +65,10 @@ async def get_shops_by_dist(query: Query.ShopsByDistance):
                     "maxDistance": radius,
                 }
             }
-        ], projection_model=ShopWithDistance
+        ],
+        projection_model=ShopWithDistance,
     ).to_list()
+
 
 @app.post("/shops/by_number", tags=["Shops"], response_model=list[ShopWithDistance])
 async def get_n_nearest_shops(query: Query.ShopsByNumber):
@@ -81,5 +83,6 @@ async def get_n_nearest_shops(query: Query.ShopsByNumber):
                     "distanceField": "distance",
                 }
             }
-        ], projection_model=ShopWithDistance
+        ],
+        projection_model=ShopWithDistance,
     ).to_list(n)
