@@ -21,6 +21,7 @@ import { useContext, useRef, useState } from "react";
 import { SingleDatepicker } from "chakra-dayzed-datepicker";
 import { usePost } from "../hooks/usePost";
 import { MarkerSetter } from "./Map";
+import { LatLngLiteral } from "leaflet";
 
 interface Flavour {
   name: string;
@@ -30,7 +31,7 @@ interface Flavour {
 const flavours = ["Ser", "Mak", "Mieszany", "Sezam", "Sól"];
 
 interface AddShopProps {
-  position: { lat: number; lng: number };
+  position: LatLngLiteral;
   isOpen: boolean;
   onClose: () => void;
   // onAddShop: () => void;
@@ -74,9 +75,8 @@ function AddShop({ position, isOpen, onClose }: AddShopProps) {
     // console.log("End Time:", endTimeHour, ":", endTimeMinute);
     console.log(position);
     const body = {
+      ...position,
       name: users[Math.floor(Math.random() * users.length)],
-      longitude: position.lng,
-      latitude: position.lat,
       flavors: flavourChecked.filter((f) => f.isChecked).map((f) => f.name),
       card_payment: isCheckedCard,
       // time: [date.getUTCDate() + 1, date.getUTCMonth() + 1, date.getUTCFullYear()],
@@ -87,12 +87,9 @@ function AddShop({ position, isOpen, onClose }: AddShopProps) {
     // console.log(body);
     post("/shops", body).catch(console.log);
     setNewMarker({
+      ...body,
       id: "1",
       name: "temp",
-      longitude: body.longitude,
-      latitude: body.latitude,
-      card_payment: body.card_payment,
-      flavors: body.flavors,
     });
     onClose();
   };

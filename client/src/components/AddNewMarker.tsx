@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Marker, Popup, useMapEvents } from "react-leaflet";
 import AddShop from "./AddShop";
 import L from "leaflet";
-import { LatLng } from "leaflet";
+import { LatLngLiteral } from "leaflet";
 import icon from "/src/assets/icon_ob.png";
 const customIcon = new L.Icon({
   iconUrl: icon,
@@ -10,7 +10,7 @@ const customIcon = new L.Icon({
 });
 
 function LocationMarker() {
-  const [position, setPosition] = useState<LatLng | null>(null);
+  const [position, setPosition] = useState<LatLngLiteral | null>(null);
   const [setupOpen, setSetupOpen] = useState(false);
   const map = useMapEvents({
     click(e) {

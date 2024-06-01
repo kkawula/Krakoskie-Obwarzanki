@@ -15,6 +15,12 @@ class Shop(Document):
     start_time: str
     end_time: str
 
+    @root_validator(pre=True)
+    def set_location(cls, values):
+        if not values.get('location'):
+            values['location'] = Point(**values)
+        return values
+
     class Settings:
         name = "shops"
         indexes = [
@@ -38,13 +44,12 @@ class Shop(Document):
         }
 
 
-class ShopWithDistance(Shop):
-    latitude: float
-    longitude: float
-    distance: float
+class ShopWithPosition(Shop):
+    lat: float
+    lng: float
 
     @root_validator(pre=True)
-    def set_lat_long(cls, values):
+    def set_location(cls, values):
         """
         Sets the latitude and longitude values based on the location coordinates, when the model is created.
 
@@ -56,6 +61,10 @@ class ShopWithDistance(Shop):
         """
         location = values.get('location')
         if location:
-            values['latitude'] = location['coordinates'][0]
-            values['longitude'] = location['coordinates'][1]
+            values['lng'] = location['coordinates'][0]
+            values['lat'] = location['coordinates'][1]
         return values
+
+
+class ShopWithDistance(ShopWithPosition):
+    distance: float
