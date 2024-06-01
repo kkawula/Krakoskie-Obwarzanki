@@ -52,7 +52,7 @@ export default function PretzelList() {
               <Text fontSize="s" fontWeight="bold" marginRight={3}>
                 {`${seller.name}`}
               </Text>
-              <Text>{`${seller.distance.toFixed(2)} km`}</Text>
+              <Text>{`${(seller.distance / 1000).toFixed(2)} km`}</Text>
             </Flex>
             <Flex direction="row">
               {seller.flavors.map((flavor, index) => {
