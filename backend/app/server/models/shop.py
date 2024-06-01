@@ -5,6 +5,7 @@ from beanie import Document
 from server.models.utils import Point
 
 
+
 class Shop(Document):
     owner_id: str = ""
     name: str
@@ -14,6 +15,7 @@ class Shop(Document):
     is_open_today: bool = True
     start_time: str
     end_time: str
+    distance: Optional[float]
 
     @root_validator(pre=True)
     def set_location(cls, values):
@@ -27,13 +29,14 @@ class Shop(Document):
             [("location", "2dsphere")],  # GEO index
         ]
 
+
     class Config:
         schema_extra = {
             "example": {
                 "name": "Pretzel Shop",
                 "location": {
                     "type": "Point",
-                    "coordinates": [50.086776271666096, 19.915122985839847]
+                    "coordinates": [50.086776271666096, 19.915122985839847],
                 },
                 "flavors": ["Sezam", "Mak"],
                 "card_payment": True,
