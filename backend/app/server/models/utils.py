@@ -8,8 +8,8 @@ class Point(BaseModel):
 
     @root_validator(pre=True)
     def set_coordinates(cls, values):
-        longitude = values.get('lng')
-        latitude = values.get('lat')
+        longitude = values.get("lng")
+        latitude = values.get("lat")
         if longitude and latitude:
-            values['coordinates'] = [longitude, latitude]
+            values["coordinates"] = [longitude, latitude]
         return values

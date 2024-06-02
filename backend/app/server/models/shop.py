@@ -5,7 +5,6 @@ from beanie import Document
 from server.models.utils import Point
 
 
-
 class Shop(Document):
     owner_id: str = ""
     name: str
@@ -18,8 +17,8 @@ class Shop(Document):
 
     @root_validator(pre=True)
     def set_location(cls, values):
-        if not values.get('location'):
-            values['location'] = Point(**values)
+        if not values.get("location"):
+            values["location"] = Point(**values)
         return values
 
     class Settings:
@@ -27,7 +26,6 @@ class Shop(Document):
         indexes = [
             [("location", "2dsphere")],  # GEO index
         ]
-
 
     class Config:
         schema_extra = {
@@ -61,10 +59,10 @@ class ShopWithPosition(Shop):
         Returns:
             dict: The updated values with latitude and longitude set.
         """
-        location = values.get('location')
+        location = values.get("location")
         if location:
-            values['lng'] = location['coordinates'][0]
-            values['lat'] = location['coordinates'][1]
+            values["lng"] = location["coordinates"][0]
+            values["lat"] = location["coordinates"][1]
         return values
 
 
