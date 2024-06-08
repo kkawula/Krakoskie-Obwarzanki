@@ -7,6 +7,33 @@ on:
     # branches: [main]
 
 jobs:
+  build:
+    name: 'Build 🏗'
+    strategy:
+      matrix:
+        os: 
+          - ubuntu-latest
+        python-version:
+          - "3.11"
+    defaults:
+      run:
+        working-directory: backend/
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Check repository
+        uses: actions/checkout@v3
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: 'pip'
+      - name: Display Python version
+        run: python -c "import sys; print(sys.version)"
+      - name: Install dependencies
+        run:  |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+  
   code-quality:
     name: 'Code-Quality 💎'
     needs: build
@@ -55,4 +82,3 @@ jobs:
       - name: Lint with MyPy
         run: |
           mypy . --pretty
- 
