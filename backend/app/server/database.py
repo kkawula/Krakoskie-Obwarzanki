@@ -4,7 +4,7 @@ import motor.motor_asyncio
 from beanie import init_beanie
 from dotenv import load_dotenv
 from server.models.shop import Shop
-
+import certifi
 
 async def init_db():
     load_dotenv()
@@ -19,7 +19,7 @@ async def init_db():
     if not DB_NAME:
         raise ValueError("You must set the DB_NAME environment variable")
 
-    client = motor.motor_asyncio.AsyncIOMotorClient(MONGO_URL)
+    client = motor.motor_asyncio.AsyncIOMotorClient(MONGO_URL, tlsCAFile=certifi.where())
     database = client.get_database(DB_NAME)
 
     # Create a 2dsphere index on the 'location' field of the 'Shop' collection
