@@ -70,9 +70,9 @@ jobs:
         with:
           options: "--exclude=tests/"
           src: "backend/"
-      - name: Lint with Isort
-        run: |
-          isort . --profile black
+      # - name: Lint with Isort
+      #   run: |
+      #     isort . --profile black
       - name: Lint with Flake8
         run: |
           # stop the build if there are Python syntax errors or undefined names
