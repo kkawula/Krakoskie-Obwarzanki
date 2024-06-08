@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-
+import os
 
 class Query:
     class ShopLocation(BaseModel):
