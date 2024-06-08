@@ -69,7 +69,7 @@ jobs:
         uses: psf/black@stable
         with:
           options: "--exclude=tests/"
-          src: "backend/src/"
+          src: "backend/"
       - name: Lint with Isort
         run: |
           isort . --profile black
