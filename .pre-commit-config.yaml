@@ -46,7 +46,8 @@ repos:
   hooks:
     # Run the linter.
     - id: ruff
-      args: [--output-format=github, check, backend]
+      args: [--fix]
+      # args: [--output-format=github, check, backend]
     # Run the formatter.
     - id: ruff-format
 # -   repo: https://github.com/pycqa/isort
