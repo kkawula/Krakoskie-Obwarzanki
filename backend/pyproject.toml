@@ -1,7 +1,0 @@
-[project]
-# Support Python 3.10+.
-requires-python = ">=3.10"
-
-[tool.ruff]
-# Set the maximum line length to 79.
-line-length = 79
