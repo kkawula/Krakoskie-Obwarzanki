@@ -49,13 +49,13 @@ repos:
       args: [--output-format=github, check, backend/]
     # Run the formatter.
     - id: ruff-format
--   repo: https://github.com/pycqa/isort
-    rev: 5.13.2
-    hooks:
-    -   id: isort
-        name: isort (python)
-        args:
-        - --settings-path=backend/pyproject.toml
+# -   repo: https://github.com/pycqa/isort
+#     rev: 5.13.2
+#     hooks:
+#     -   id: isort
+#         name: isort (python)
+#         args:
+#         - --settings-path=backend/pyproject.toml
 -   repo: https://github.com/codespell-project/codespell
     rev: v2.2.6
     hooks:
