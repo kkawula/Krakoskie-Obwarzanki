@@ -51,7 +51,9 @@ async def get_shop(shop_id: str):
     return shop
 
 
-@app.post("/shops/by_distance", tags=["Shops"], response_model=list[ShopWithDistance])
+@app.post(
+    "/shops/by_distance", tags=["Shops"], response_model=list[ShopWithDistance]
+)
 async def get_shops_by_dist(query: Query.ShopsByDistance):
     radius = query.radius
     point = Point(**query.dict())
@@ -70,7 +72,9 @@ async def get_shops_by_dist(query: Query.ShopsByDistance):
     ).to_list()
 
 
-@app.post("/shops/by_number", tags=["Shops"], response_model=list[ShopWithDistance])
+@app.post(
+    "/shops/by_number", tags=["Shops"], response_model=list[ShopWithDistance]
+)
 async def get_n_nearest_shops(query: Query.ShopsByNumber):
     n = query.n_closest
     point = Point(**query.dict())

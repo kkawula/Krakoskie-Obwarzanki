@@ -5,7 +5,6 @@ from pymongo import MongoClient
 
 
 def init_db():
-
     load_dotenv()
 
     MONGO_URL = os.getenv("MONGO_URL")
