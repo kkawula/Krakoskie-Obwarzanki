@@ -9,7 +9,7 @@ jobs:
     - uses: actions/setup-python@v2
     - uses: chartboost/ruff-action@v1
       with:
-        args: --check .
+        args: -- --check .
         fix_args: --fix .
     - uses: stefanzweifel/git-auto-commit-action@v4
       with:
