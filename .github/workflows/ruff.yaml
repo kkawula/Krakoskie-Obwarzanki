@@ -1,0 +1,23 @@
+name: Ruff
+
+on: 
+  pull_request:
+
+jobs:
+  code-quality-check:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4.1.1
+
+    - name: Set Python Version
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ inputs.python_version }}
+
+    - name: Python Ruff Lint and Format
+      uses: adityabhangle658/ruff-python-lint-format-check-pr@v1.0.3
+ 
+    - name: Testing 
+      run: echo "Done"

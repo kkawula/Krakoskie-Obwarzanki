@@ -1,7 +1,7 @@
 from typing import List
-from pydantic import root_validator
-from beanie import Document
 
+from beanie import Document
+from pydantic import root_validator
 from server.models.utils import Point
 
 
@@ -51,7 +51,8 @@ class ShopWithPosition(Shop):
     @root_validator(pre=True)
     def set_location(cls, values):
         """
-        Sets the latitude and longitude values based on the location coordinates, when the model is created.
+        Sets the latitude and longitude values based on the location coordinates,
+          when the model is created.
 
         Args:
             values (dict): The input values for the model.

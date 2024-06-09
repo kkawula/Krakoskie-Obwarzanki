@@ -2,8 +2,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse
 from server.database import init_db
-from server.models.shop import Shop, ShopWithDistance, ShopWithPosition
 from server.models.query import Query
+from server.models.shop import Shop, ShopWithDistance, ShopWithPosition
 from server.models.utils import Point
 
 app = FastAPI()
@@ -51,9 +51,7 @@ async def get_shop(shop_id: str):
     return shop
 
 
-@app.post(
-    "/shops/by_distance", tags=["Shops"], response_model=list[ShopWithDistance]
-)
+@app.post("/shops/by_distance", tags=["Shops"], response_model=list[ShopWithDistance])
 async def get_shops_by_dist(query: Query.ShopsByDistance):
     radius = query.radius
     point = Point(**query.dict())
@@ -72,9 +70,7 @@ async def get_shops_by_dist(query: Query.ShopsByDistance):
     ).to_list()
 
 
-@app.post(
-    "/shops/by_number", tags=["Shops"], response_model=list[ShopWithDistance]
-)
+@app.post("/shops/by_number", tags=["Shops"], response_model=list[ShopWithDistance])
 async def get_n_nearest_shops(query: Query.ShopsByNumber):
     n = query.n_closest
     point = Point(**query.dict())
