@@ -20,11 +20,15 @@ jobs:
           # fix_args: --fix .
           config: .ruff.toml
           src: backend
+      - uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "style fixes by ruff"
+          commit_options: "--no-verify"
       - uses: chartboost/ruff-action@v1
         with:
           args: "format"
           src: backend
       - uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "style fixes by ruff"
+          commit_message: "refactors by ruff"
           commit_options: "--no-verify"
