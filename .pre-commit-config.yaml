@@ -24,60 +24,64 @@ default_stages: [commit, push]
 default_language_version:
   python: python3.10
 ci:
-    autofix_commit_msg: |
-        ci(pre-commit): Autofixing commit msg from pre-commit.com hooks
-    autofix_prs: true
-    autoupdate_branch: ''
-    autoupdate_commit_msg: 'ci(autoupdate): Autoupdating commit msg'
-    autoupdate_schedule: weekly
-    skip: []
-    submodules: false
+  autofix_commit_msg: |
+    ci(pre-commit): Autofixing commit msg from pre-commit.com hooks
+  autofix_prs: true
+  autoupdate_branch: ""
+  autoupdate_commit_msg: "ci(autoupdate): Autoupdating commit msg"
+  autoupdate_schedule: weekly
+  skip: []
+  submodules: false
 repos:
--   repo: https://github.com/pre-commit/pre-commit-hooks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.5.0
     hooks:
-    -   id: check-yaml
-    -   id: end-of-file-fixer
-    -   id: trailing-whitespace
+      - id: check-yaml
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
         files: ^backend/
-- repo: https://github.com/astral-sh/ruff-pre-commit
-  # Ruff version.
-  rev: v0.4.8
-  hooks:
-    # Run the linter.
-    - id: ruff
-      args: [--fix]
-      # args: [--output-format=github, check, backend]
-    # Run the formatter.
-    - id: ruff-format
-# -   repo: https://github.com/pycqa/isort
-#     rev: 5.13.2
-#     hooks:
-#     -   id: isort
-#         name: isort (python)
-#         args:
-#         - --settings-path=backend/pyproject.toml
-# -   repo: https://github.com/codespell-project/codespell
-#     rev: v2.2.6
-#     hooks:
-#     -   id: codespell
-#         additional_dependencies:
-#         - tomli
--   repo: https://github.com/pre-commit/mirrors-mypy
+      - id: check-merge-conflict
+      - id: mixed-line-ending
+        args: [--fix=auto]
+      - id: name-tests-test
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    # Ruff version.
+    rev: v0.4.8
+    hooks:
+      # Run the linter.
+      - id: ruff
+        args: [--fix]
+        # args: [--output-format=github, check, backend]
+      # Run the formatter.
+      - id: ruff-format
+  # -   repo: https://github.com/pycqa/isort
+  #     rev: 5.13.2
+  #     hooks:
+  #     -   id: isort
+  #         name: isort (python)
+  #         args:
+  #         - --settings-path=backend/pyproject.toml
+  # -   repo: https://github.com/codespell-project/codespell
+  #     rev: v2.2.6
+  #     hooks:
+  #     -   id: codespell
+  #         additional_dependencies:
+  #         - tomli
+  - repo: https://github.com/pre-commit/mirrors-mypy
     rev: "v1.9.0"
     hooks:
-    -   id: mypy
+      - id: mypy
         args:
-        - --config-file=backend/pyproject.toml
-- repo: https://github.com/pre-commit/mirrors-prettier
-  rev: "v4.0.0-alpha.8"
-  hooks:
-    - id: prettier
-      files: \.[jt]sx?$
-      types_or: [css, javascript]
--   repo: https://github.com/pre-commit/mirrors-eslint
+          - --config-file=backend/pyproject.toml
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: "v4.0.0-alpha.8"
+    hooks:
+      - id: prettier
+        files: \.[jt]sx?$
+        types_or: [css, javascript]
+  - repo: https://github.com/pre-commit/mirrors-eslint
     rev: "v9.0.0-rc.0"
     hooks:
-    -   id: eslint
-        files: \.[jt]sx?$  # *.js, *.jsx, *.ts and *.tsx
+      - id: eslint
+        files: \.[jt]sx?$ # *.js, *.jsx, *.ts and *.tsx
         types: [file]
