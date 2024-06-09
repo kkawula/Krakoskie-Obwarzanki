@@ -22,9 +22,9 @@ jobs:
         src: backend
     - uses: chartboost/ruff-action@v1
       with:
-        args: 'format --check'
+        args: 'format --check --fix'
         src: backend
-    - uses: stefanzweifel/git-auto-commit-action@v4
+    - uses: stefanzweifel/git-auto-commit-action@v5
       with:
         commit_message: 'style fixes by ruff'
         commit_options: '--no-verify'
