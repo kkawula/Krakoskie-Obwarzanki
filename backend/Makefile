@@ -7,11 +7,14 @@ PIP = ./venv/bin/pip
 
 
 venv/bin/activate: requirements.txt requirements-dev.txt
-	python3 -m venv venv
+	python -m venv venv
 	chmod +x venv/bin/activate
 	. ./venv/bin/activate
-	$(PIP) install -r requirements.txt -r requirements-dev.txt
-	make pre-commit-install
+	$(PIP) install -r requirements.txt
+	$(PIP) install -r requirements-dev.txt
+#  -r requirements-dev.txt
+# pre-commit install
+# make pre-commit-install
 
 
 venv: venv/bin/activate
