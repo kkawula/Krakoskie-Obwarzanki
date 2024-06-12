@@ -13,15 +13,16 @@ venv/bin/activate: requirements.txt requirements-dev.txt
 	$(PIP) install -r requirements.txt
 	$(PIP) install -r requirements-dev.txt
 #  -r requirements-dev.txt
-# pre-commit install
+	pre-commit install
 # make pre-commit-install
 
 
-venv: venv/bin/activate
-	. ./venv/bin/activate
+# venv: venv/bin/activate
+# 	. ./venv/bin/activate
 
 # Run the server
-server: venv
+server: venv/bin/activate
+	. ./venv/bin/activate
 	python app/main.py
 
 clean:
