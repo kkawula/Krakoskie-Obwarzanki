@@ -30,14 +30,14 @@ server: venv/bin/activate
 	. ./venv/bin/activate
 	$(PYTHON) app/main.py
 
-.PHONY: pre-commit-run
+.PHONY: pre-commit
 # Run pre-commit on all files in staging area
-pre-commit-run: pre-commit-install
+pre-commit: pre-commit-install
 	pre-commit run
 
-.PHONY: pre-commit-all-files
+.PHONY: pre-commit-all
 # Run pre-commit on all files
-pre-commit-all-files: pre-commit-install
+pre-commit-all: pre-commit-install
 	pre-commit run --all-files
 
 .PHONY: clean

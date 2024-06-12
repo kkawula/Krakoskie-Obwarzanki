@@ -56,6 +56,13 @@ dla developera
 make install-dev
 ```
 
+lub
+
+```sh
+pip install -r requirements-dev.txt
+pre-commit install
+```
+
 ### Uruchomienie serwera
 
 ```
@@ -65,44 +72,28 @@ make server
 lub
 
 ```
-python app/main.py
+python3 app/main.py
 ```
 
 ### Pre-commit
 
-Aby pre-commit działał poprawnie, musisz zainstalować pre-commit. (jeśli środowisko wirtualne utworzyłeś za pomocą Makefile, to pre-commit jest już zainstalowany)
+Pre-commit będzie działać przed każdym commitowaniem.
+
+Komenda `pre-commit run` sprawdza tylko zmienione pliki, które zostały dodane do staged (`git add .`) (automatycznie wywoływana przy każdym commicie), natomiast po dodaniu flagi `--all-files` sprawdza wszystkie pliki.
+
+Do tych komend utworzone są skróty w Makefile:
 
 ```sh
-pip install -r requirements-dev.txt
-```
-
-lub
-
-```sh
-make install-dev
-```
-
-Następnie zainstaluj pre-commit (należy to zrobić tylko raz)
-
-```sh
-pre-commit install
-```
-
-Teraz pre-commit będzie działać przed każdym commitowaniem.
-
-Możesz też ręcznie sprawdzić czy wszystko jest ok (ta sama komenda jest automatycznie wywoływana przy każdym commicie). `pre-commit run` sprawdza tylko zmienione pliki, które zostały dodane do staged (`git add .`), a `pre-commit run --all-files` sprawdza wszystkie pliki.
-
-```sh
-pre-commit run
+make pre-commit
 ```
 
 ```sh
-pre-commit run --all-files
+make pre-commit-all
 ```
 
 #### Jak to działa?
 
-Pre-commit sprawdza czy kod spełnia pewne wymagania przed commitowaniem. Jeśli nie spełnia, to commit nie zostanie zrobiony, ale hooki zrobią odpowiedni refactor kodu. Wprowadzone zmiany należy znowu dodać do stash i ponownie zrobić commit. Wymagania są zdefiniowane w pliku `.pre-commit-config.yaml`.
+Pre-commit sprawdza czy kod spełnia pewne wymagania przed commitowaniem. Jeśli nie spełnia, to commit nie zostanie wykonany, ale hooki zrobią odpowiedni refactor kodu (w wiekszości przypadków). Wprowadzone zmiany należy znowu dodać do staged i ponownie zrobić commit. Wymagania są zdefiniowane w pliku `.pre-commit-config.yaml`.
 
 Jeśli z jakiegoś powodu chcesz zrobić commit bez sprawdzania, to możesz użyć flagi `--no-verify`.
 
