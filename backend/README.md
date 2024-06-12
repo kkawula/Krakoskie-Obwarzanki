@@ -1,14 +1,18 @@
 ## Setup backendu
 
-### Wirtualne środowisko
-
-Najpierw utwórz wirtualne środowisko. Możesz to zrobić za pomocą Makefile. Komenda ta utworzy wirtualne środowisko w folderze `venv`, następnie je aktywuje i zainstaluje wymagane biblioteki. Po wykonaniu tej komendy, można już [wystartować server](#uruchomienie-serwera).
+### Aby uruchomić serwer wystarczy wykonać
 
 ```sh
-make venv
+make server
 ```
 
-lub ręcznie
+Komenda ta utworzy wirtualne środowisko, zainstaluje wymagane biblioteki (w tym pre-commit) i uruchomi serwer.
+
+To samo można zrobić krok po kroku manulanie:
+
+### Wirtualne środowisko
+
+Najpierw utwórz wirtualne środowisko.
 
 ```sh
 python -m venv venv
@@ -44,6 +48,12 @@ lub
 
 ```sh
 pip install -r requirements.txt
+```
+
+dla developera
+
+```sh
+make install-dev
 ```
 
 ### Uruchomienie serwera
