@@ -7,7 +7,6 @@ from dotenv import load_dotenv
 from server.models.shop import Shop
 
 
-
 async def init_db():
     load_dotenv()
 
