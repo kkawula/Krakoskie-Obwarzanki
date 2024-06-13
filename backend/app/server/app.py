@@ -2,8 +2,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse
 from server.database import init_db
-from server.models.shop import Shop, ShopWithDistance, ShopWithPosition
 from server.models.query import Query
+from server.models.shop import Shop, ShopWithDistance, ShopWithPosition
 from server.models.utils import Point
 
 app = FastAPI()

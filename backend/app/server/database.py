@@ -1,10 +1,11 @@
 import os
 
+import certifi
 import motor.motor_asyncio
 from beanie import init_beanie
 from dotenv import load_dotenv
 from server.models.shop import Shop
-import certifi
+
 
 
 async def init_db():
