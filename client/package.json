@@ -6,8 +6,9 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "lint": "eslint . --ext .ts,.tsx --max-warnings=0",
-    "format": "prettier --write .",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint . --ext .ts,.tsx --max-warnings=0 --fix",
+    "pretty": "prettier --write .",
     "preview": "vite preview",
     "prepare": "cd .. && husky install client/.husky"
   },
