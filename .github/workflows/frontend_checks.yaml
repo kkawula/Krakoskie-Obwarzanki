@@ -3,7 +3,7 @@ on: pull_request
 
 defaults:
   run:
-    working-directory: mobile
+    working-directory: client
 jobs:
   frontend-commit-checks:
     runs-on: ubuntu-latest
