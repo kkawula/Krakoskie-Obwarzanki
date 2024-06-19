@@ -1,5 +1,5 @@
 name: Lint, Refactor and Commit backend code
-on: push
+on: pull_request
 
 jobs:
   lint:
