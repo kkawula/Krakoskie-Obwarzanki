@@ -1,4 +1,4 @@
-name: Lint, Refactor and Commit
+name: Lint, Refactor and Commit backend code
 on: push
 
 jobs:
