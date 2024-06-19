@@ -22,14 +22,12 @@ import { SingleDatepicker } from "chakra-dayzed-datepicker";
 import { usePost } from "../hooks/usePost";
 import { MarkerSetter } from "./Map";
 import { LatLngLiteral } from "leaflet";
+import { Time } from "../utils/time";
 
 interface Flavour {
   name: string;
   isChecked: boolean;
 }
-
-const flavours = ["Ser", "Mak", "Mieszany", "Sezam", "Sól"];
-
 interface AddShopProps {
   position: LatLngLiteral;
   isOpen: boolean;
@@ -37,6 +35,8 @@ interface AddShopProps {
   // onAddShop: () => void;
   // shopData: { name: string; location: string; description: string; image: string };
 }
+const flavours = ["Ser", "Mak", "Mieszany", "Sezam", "Sól"];
+const users = ["Pan Piotrek", "Pan Kamil", "Pan Wiktor", "Pan Bartek", "Pan Wojtek", "Pan Basia"];
 
 function AddShop({ position, isOpen, onClose }: AddShopProps) {
   const [date, setDate] = useState(new Date());
@@ -50,41 +50,21 @@ function AddShop({ position, isOpen, onClose }: AddShopProps) {
     })
   );
 
-  const prettyTime = (val: string) => {
-    if (val.length === 1) {
-      return "0" + val;
-    }
-    return val;
-  };
-
   const post = usePost();
 
-  const users = ["Pan Piotrek", "Pan Kamil", "Pan Wiktor", "Pan Bartek", "Pan Wojtek", "Pan Basia"];
-
-  const [startTimeHour, setStartTimeHour] = useState("8");
-  const [startTimeMinute, setStartTimeMinute] = useState("0");
-
-  const [endTimeHour, setEndTimeHour] = useState("16");
-  const [endTimeMinute, setEndTimeMinute] = useState("0");
-
-  // const [endTimeHour, setEndTimeHour] = useState(16);
-  // const [endTimeMinute, setEndTimeMinute] = useState(0);
+  const [startTime, setStartTime] = useState(new Time(8, 0));
+  const [endTime, setEndTime] = useState(new Time(16, 0));
 
   const handleSubmit = () => {
-    // console.log("Start Time:", startTimeHour, ":", startTimeMinute);
-    // console.log("End Time:", endTimeHour, ":", endTimeMinute);
-    console.log(position);
     const body = {
       ...position,
-      name: users[Math.floor(Math.random() * users.length)],
+      name: users[Math.floor(Math.random() * users.length)], // ! temporary
       flavors: flavourChecked.filter((f) => f.isChecked).map((f) => f.name),
-      card_payment: isCheckedCard,
-      // time: [date.getUTCDate() + 1, date.getUTCMonth() + 1, date.getUTCFullYear()],
+      card_payment: isCardChecked,
       is_open_today: true,
-      start_time: prettyTime(startTimeHour) + ":" + prettyTime(startTimeMinute),
-      end_time: prettyTime(endTimeHour) + ":" + prettyTime(endTimeMinute),
+      start_time: startTime.toString(),
+      end_time: endTime.toString(),
     };
-    // console.log(body);
     post("/shops", body).catch(console.log);
     setNewMarker({
       ...body,
@@ -94,15 +74,14 @@ function AddShop({ position, isOpen, onClose }: AddShopProps) {
     onClose();
   };
 
-  const [isCheckedCard, setIsCheckedCard] = useState(false);
+  const [isCardChecked, setIsCheckedCard] = useState(false);
 
-  const handleTogglev2 = () => setIsCheckedCard(!isCheckedCard);
-
-  const handleToggle = (i: number) => {
-    flavourChecked[i].isChecked = !flavourChecked[i].isChecked;
-    setFlavourChecked([...flavourChecked]);
+  const handleFlavoursToggled = (idx: number) => {
+    const nextFlavourChecked = flavourChecked.map((f, index) =>
+      index === idx ? { ...f, isChecked: !f.isChecked } : f
+    );
+    setFlavourChecked(nextFlavourChecked);
   };
-
   const cancelRef = useRef(null);
   return (
     <AlertDialog isOpen={isOpen} onClose={onClose} leastDestructiveRef={cancelRef}>
@@ -119,10 +98,10 @@ function AddShop({ position, isOpen, onClose }: AddShopProps) {
                 <NumberInput
                   size="sm"
                   maxW={16}
-                  value={startTimeHour}
+                  value={startTime.hour}
                   min={0}
                   max={23}
-                  onChange={setStartTimeHour}
+                  onChange={(value) => setStartTime(startTime.setHour(value))}
                 >
                   <NumberInputField />
                   <NumberInputStepper>
@@ -133,11 +112,11 @@ function AddShop({ position, isOpen, onClose }: AddShopProps) {
                 <NumberInput
                   size="sm"
                   maxW={16}
-                  value={startTimeMinute}
+                  value={startTime.minute}
                   min={0}
                   max={59}
                   step={5}
-                  onChange={setStartTimeMinute}
+                  onChange={(value) => setStartTime(startTime.setMinute(value))}
                 >
                   <NumberInputField />
                   <NumberInputStepper>
@@ -151,10 +130,10 @@ function AddShop({ position, isOpen, onClose }: AddShopProps) {
                 <NumberInput
                   size="sm"
                   maxW={16}
-                  value={endTimeHour}
+                  value={endTime.hour}
                   min={0}
                   max={23}
-                  onChange={setEndTimeHour}
+                  onChange={(value) => setEndTime(endTime.setHour(value))}
                 >
                   <NumberInputField />
                   <NumberInputStepper>
@@ -165,11 +144,11 @@ function AddShop({ position, isOpen, onClose }: AddShopProps) {
                 <NumberInput
                   size="sm"
                   maxW={16}
-                  value={endTimeMinute}
+                  value={endTime.minute}
                   min={0}
                   max={59}
                   step={5}
-                  onChange={setEndTimeMinute}
+                  onChange={(value) => setEndTime(endTime.setMinute(value))}
                 >
                   <NumberInputField />
                   <NumberInputStepper>
@@ -185,7 +164,11 @@ function AddShop({ position, isOpen, onClose }: AddShopProps) {
               <VStack align={"start"}>
                 {flavourChecked.map((f, i) => {
                   return (
-                    <Checkbox key={i} isChecked={f.isChecked} onChange={() => handleToggle(i)}>
+                    <Checkbox
+                      key={i}
+                      isChecked={f.isChecked}
+                      onChange={() => handleFlavoursToggled(i)}
+                    >
                       {f.name}
                     </Checkbox>
                   );
@@ -193,7 +176,11 @@ function AddShop({ position, isOpen, onClose }: AddShopProps) {
               </VStack>
             </CheckboxGroup>
             <FormLabel mt={2}>Płatności</FormLabel>
-            <Checkbox isChecked={isCheckedCard} colorScheme="teal" onChange={handleTogglev2}>
+            <Checkbox
+              isChecked={isCardChecked}
+              colorScheme="teal"
+              onChange={() => setIsCheckedCard(!isCardChecked)}
+            >
               Płatność kartą
             </Checkbox>
             <VStack>
