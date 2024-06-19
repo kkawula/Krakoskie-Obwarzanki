@@ -1,4 +1,10 @@
-import { MapContainer, TileLayer, Marker, Popup, ZoomControl } from "react-leaflet";
+import {
+  MapContainer,
+  TileLayer,
+  Marker,
+  Popup,
+  ZoomControl,
+} from "react-leaflet";
 import L from "leaflet";
 import LocationMarker from "./AddNewMarker";
 import icon from "/src/assets/icon_ob.png";

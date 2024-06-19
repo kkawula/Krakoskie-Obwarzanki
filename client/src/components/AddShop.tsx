@@ -47,7 +47,7 @@ function AddShop({ position, isOpen, onClose }: AddShopProps) {
         name: f,
         isChecked: false,
       } as Flavour;
-    })
+    }),
   );
 
   const prettyTime = (val: string) => {
@@ -59,7 +59,14 @@ function AddShop({ position, isOpen, onClose }: AddShopProps) {
 
   const post = usePost();
 
-  const users = ["Pan Piotrek", "Pan Kamil", "Pan Wiktor", "Pan Bartek", "Pan Wojtek", "Pan Basia"];
+  const users = [
+    "Pan Piotrek",
+    "Pan Kamil",
+    "Pan Wiktor",
+    "Pan Bartek",
+    "Pan Wojtek",
+    "Pan Basia",
+  ];
 
   const [startTimeHour, setStartTimeHour] = useState("8");
   const [startTimeMinute, setStartTimeMinute] = useState("0");
@@ -105,13 +112,21 @@ function AddShop({ position, isOpen, onClose }: AddShopProps) {
 
   const cancelRef = useRef(null);
   return (
-    <AlertDialog isOpen={isOpen} onClose={onClose} leastDestructiveRef={cancelRef}>
+    <AlertDialog
+      isOpen={isOpen}
+      onClose={onClose}
+      leastDestructiveRef={cancelRef}
+    >
       <AlertDialogOverlay>
         <AlertDialogContent mt={10}>
           <AlertDialogHeader>Nowe stoisko</AlertDialogHeader>
           <AlertDialogBody>
             <FormLabel>Data:</FormLabel>
-            <SingleDatepicker name="date-input" date={date} onDateChange={setDate} />
+            <SingleDatepicker
+              name="date-input"
+              date={date}
+              onDateChange={setDate}
+            />
 
             <FormControl>
               <FormLabel mt={4}>Godzina rozpoczęcia:</FormLabel>
@@ -185,7 +200,11 @@ function AddShop({ position, isOpen, onClose }: AddShopProps) {
               <VStack align={"start"}>
                 {flavourChecked.map((f, i) => {
                   return (
-                    <Checkbox key={i} isChecked={f.isChecked} onChange={() => handleToggle(i)}>
+                    <Checkbox
+                      key={i}
+                      isChecked={f.isChecked}
+                      onChange={() => handleToggle(i)}
+                    >
                       {f.name}
                     </Checkbox>
                   );
@@ -193,7 +212,11 @@ function AddShop({ position, isOpen, onClose }: AddShopProps) {
               </VStack>
             </CheckboxGroup>
             <FormLabel mt={2}>Płatności</FormLabel>
-            <Checkbox isChecked={isCheckedCard} colorScheme="teal" onChange={handleTogglev2}>
+            <Checkbox
+              isChecked={isCheckedCard}
+              colorScheme="teal"
+              onChange={handleTogglev2}
+            >
               Płatność kartą
             </Checkbox>
             <VStack>

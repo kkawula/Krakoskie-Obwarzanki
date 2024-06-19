@@ -28,7 +28,11 @@ function LocationMarker() {
         </Marker>
       )}
       {position && (
-        <AddShop position={position} isOpen={setupOpen} onClose={() => setSetupOpen(false)} />
+        <AddShop
+          position={position}
+          isOpen={setupOpen}
+          onClose={() => setSetupOpen(false)}
+        />
       )}
     </>
   );
