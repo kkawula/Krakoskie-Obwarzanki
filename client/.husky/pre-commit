@@ -1,3 +1,4 @@
+cd client
 yarn test
 yarn prettier --check .
 yarn lint
