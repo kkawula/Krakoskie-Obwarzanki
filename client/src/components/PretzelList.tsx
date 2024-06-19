@@ -1,6 +1,6 @@
 import { Box, Text, Flex, Badge } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-interface Seller {
+type Seller = {
   id: string;
   name: string;
   lng: number;
@@ -8,7 +8,7 @@ interface Seller {
   card_payment: boolean;
   flavors: string[];
   distance: number;
-}
+};
 
 export default function PretzelList() {
   const [sellers, setSellers] = useState<Seller[]>([]);
@@ -25,7 +25,7 @@ export default function PretzelList() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: body,
+        body,
       });
       if (response.ok) {
         const data: Seller[] = await response.json();
@@ -40,7 +40,7 @@ export default function PretzelList() {
   };
 
   useEffect(() => {
-    handleSellers();
+    handleSellers().catch(console.error);
   }, []);
 
   return (

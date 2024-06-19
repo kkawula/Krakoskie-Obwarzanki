@@ -10,7 +10,9 @@ import RegisterForm from "./RegisterForm";
 export default function Widget() {
   const [show, setShow] = useState(false);
 
-  const handleToggle = () => setShow(!show);
+  const handleToggle = () => {
+    setShow(!show);
+  };
 
   return (
     <Box

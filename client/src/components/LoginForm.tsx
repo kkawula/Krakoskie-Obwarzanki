@@ -27,7 +27,9 @@ export default function LoginForm() {
         <Input
           type="text"
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={(e) => {
+            setEmail(e.target.value);
+          }}
         />
       </FormControl>
       <FormControl id="password" isRequired mt="4">
@@ -35,7 +37,9 @@ export default function LoginForm() {
         <Input
           type="password"
           value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          onChange={(e) => {
+            setPassword(e.target.value);
+          }}
         />
       </FormControl>
       <Button type="submit" colorScheme="blue" mt="4">

@@ -21,33 +21,33 @@ import { useContext, useRef, useState } from "react";
 import { SingleDatepicker } from "chakra-dayzed-datepicker";
 import { usePost } from "../hooks/usePost";
 import { MarkerSetter } from "./Map";
-import { LatLngLiteral } from "leaflet";
+import { type LatLngLiteral } from "leaflet";
 
-interface Flavour {
+type Flavour = {
   name: string;
   isChecked: boolean;
-}
+};
 
 const flavours = ["Ser", "Mak", "Mieszany", "Sezam", "Sól"];
 
-interface AddShopProps {
+type AddShopProps = {
   position: LatLngLiteral;
   isOpen: boolean;
   onClose: () => void;
   // onAddShop: () => void;
   // shopData: { name: string; location: string; description: string; image: string };
-}
+};
 
 function AddShop({ position, isOpen, onClose }: AddShopProps) {
   const [date, setDate] = useState(new Date());
   const setNewMarker = useContext(MarkerSetter);
-  const [flavourChecked, setFlavourChecked] = useState(
+  const [flavourChecked, setFlavourChecked] = useState<Flavour[]>(
     flavours.map((f) => {
       return {
         name: f,
         isChecked: false,
-      } as Flavour;
-    }),
+      };
+    })
   );
 
   const prettyTime = (val: string) => {
@@ -103,7 +103,9 @@ function AddShop({ position, isOpen, onClose }: AddShopProps) {
 
   const [isCheckedCard, setIsCheckedCard] = useState(false);
 
-  const handleTogglev2 = () => setIsCheckedCard(!isCheckedCard);
+  const handleTogglev2 = () => {
+    setIsCheckedCard(!isCheckedCard);
+  };
 
   const handleToggle = (i: number) => {
     flavourChecked[i].isChecked = !flavourChecked[i].isChecked;
@@ -130,7 +132,7 @@ function AddShop({ position, isOpen, onClose }: AddShopProps) {
 
             <FormControl>
               <FormLabel mt={4}>Godzina rozpoczęcia:</FormLabel>
-              <Stack shouldWrapChildren direction="row" align={"left"}>
+              <Stack shouldWrapChildren direction="row" align="left">
                 <NumberInput
                   size="sm"
                   maxW={16}
@@ -162,7 +164,7 @@ function AddShop({ position, isOpen, onClose }: AddShopProps) {
                 </NumberInput>
               </Stack>
               <FormLabel mt={2}>Godzina zakończenia:</FormLabel>
-              <Stack shouldWrapChildren direction="row" align={"left"}>
+              <Stack shouldWrapChildren direction="row" align="left">
                 <NumberInput
                   size="sm"
                   maxW={16}
@@ -197,13 +199,15 @@ function AddShop({ position, isOpen, onClose }: AddShopProps) {
 
             <FormLabel mt={2}>Dostępne smaki obwarzanków</FormLabel>
             <CheckboxGroup colorScheme="teal">
-              <VStack align={"start"}>
+              <VStack align="start">
                 {flavourChecked.map((f, i) => {
                   return (
                     <Checkbox
                       key={i}
                       isChecked={f.isChecked}
-                      onChange={() => handleToggle(i)}
+                      onChange={() => {
+                        handleToggle(i);
+                      }}
                     >
                       {f.name}
                     </Checkbox>

@@ -7,16 +7,16 @@ import {
 } from "react-leaflet";
 import L from "leaflet";
 import LocationMarker from "./AddNewMarker";
-import icon from "/src/assets/icon_ob.png";
+import icon from "../assets/icon_ob.png";
 import { createContext, useEffect, useState } from "react";
-export interface IMarker {
+export type IMarker = {
   id: string;
   name: string;
   lng: number;
   lat: number;
   card_payment: boolean;
   flavors: string[];
-}
+};
 
 export const MarkerSetter = createContext<(marker: IMarker) => void>(() => {});
 
@@ -56,9 +56,16 @@ export default function Map() {
       console.error("An error occurred while fetching marker:", error);
     }
   };
-  const [newMarker, setNewMarker] = useState({} as IMarker);
+  const [newMarker, setNewMarker] = useState<IMarker>({
+    id: "",
+    name: "",
+    lng: 0,
+    lat: 0,
+    card_payment: false,
+    flavors: [],
+  });
   useEffect(() => {
-    handleMarker();
+    handleMarker().catch(console.error);
   }, [newMarker]);
 
   return (

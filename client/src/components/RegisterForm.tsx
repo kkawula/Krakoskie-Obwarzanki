@@ -20,7 +20,9 @@ export default function RegisterForm() {
         <Input
           type="text"
           value={username}
-          onChange={(e) => setUsername(e.target.value)}
+          onChange={(e) => {
+            setUsername(e.target.value);
+          }}
         />
       </FormControl>
       <FormControl id="email" isRequired mt={4}>
@@ -28,7 +30,9 @@ export default function RegisterForm() {
         <Input
           type="email"
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={(e) => {
+            setEmail(e.target.value);
+          }}
         />
       </FormControl>
       <FormControl id="password" isRequired mt={4}>
@@ -36,7 +40,9 @@ export default function RegisterForm() {
         <Input
           type="password"
           value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          onChange={(e) => {
+            setPassword(e.target.value);
+          }}
         />
       </FormControl>
       <Button mt={4} type="submit">
