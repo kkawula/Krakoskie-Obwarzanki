@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Marker, Popup, useMapEvents } from "react-leaflet";
 import AddShop from "./AddShop";
 import L, { type LatLngLiteral } from "leaflet";
-// import icon from "/src/assets/icon_ob.png";
 import icon from "../assets/icon_ob.png";
 
 const customIcon = new L.Icon({
