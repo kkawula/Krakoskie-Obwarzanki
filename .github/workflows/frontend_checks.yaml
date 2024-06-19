@@ -1,8 +1,9 @@
 name: Lint and Test on Pull Request Frontend
-
 on: pull_request
 
-working-directory: client
+defaults:
+  run:
+    working-directory: mobile
 jobs:
   frontend-commit-checks:
     runs-on: ubuntu-latest
