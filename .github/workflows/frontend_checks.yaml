@@ -21,6 +21,12 @@ jobs:
           node-version: "${{ steps.nvm.outputs.NVMRC }}"
       - name: Install dependencies
         run: yarn
+      - name: Run prettier
+        run: yarn prettier --write .
+      - uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "style fixes by prettier"
+          commit_options: "--no-verify"
       - name: Run lint
         run: yarn lint --quiet --fix
       - uses: stefanzweifel/git-auto-commit-action@v5
