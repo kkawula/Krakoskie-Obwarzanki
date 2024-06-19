@@ -22,7 +22,7 @@ import { SingleDatepicker } from "chakra-dayzed-datepicker";
 import { usePost } from "../hooks/usePost";
 import { MarkerSetter } from "./Map";
 import { LatLngLiteral } from "leaflet";
-import { Time } from "../utils/time";
+import { ITime, prettyTime } from "../utils/time";
 
 interface Flavour {
   name: string;
@@ -41,17 +41,24 @@ const users = ["Pan Piotrek", "Pan Kamil", "Pan Wiktor", "Pan Bartek", "Pan Wojt
 function AddShop({ position, isOpen, onClose }: AddShopProps) {
   const setNewMarker = useContext(MarkerSetter);
 
-  const [flavourChecked, setFlavourChecked] = useState(
+  const [flavourChecked, setFlavourChecked] = useState<Flavour[]>(
     flavours.map((f) => {
       return {
         name: f,
         isChecked: false,
-      } as Flavour;
+      };
     })
   );
+
   const [date, setDate] = useState(new Date());
-  const [startTime, setStartTime] = useState(new Time(8, 0));
-  const [endTime, setEndTime] = useState(new Time(16, 0));
+  const [startTime, setStartTime] = useState<ITime>({
+    hour: 8,
+    minute: 0,
+  });
+  const [endTime, setEndTime] = useState<ITime>({
+    hour: 16,
+    minute: 0,
+  });
   const [isCardChecked, setIsCheckedCard] = useState(false);
 
   const cancelRef = useRef(null);
@@ -65,8 +72,8 @@ function AddShop({ position, isOpen, onClose }: AddShopProps) {
       flavors: flavourChecked.filter((f) => f.isChecked).map((f) => f.name),
       card_payment: isCardChecked,
       is_open_today: true,
-      start_time: startTime.toString(),
-      end_time: endTime.toString(),
+      start_time: prettyTime(startTime),
+      end_time: prettyTime(endTime),
     };
     post("/shops", body).catch(console.log);
     setNewMarker({
@@ -101,7 +108,7 @@ function AddShop({ position, isOpen, onClose }: AddShopProps) {
                   value={startTime.hour}
                   min={0}
                   max={23}
-                  onChange={(value) => setStartTime(startTime.setHour(value))}
+                  onChange={(value) => setStartTime({ ...startTime, hour: parseInt(value) })}
                 >
                   <NumberInputField />
                   <NumberInputStepper>
@@ -116,7 +123,7 @@ function AddShop({ position, isOpen, onClose }: AddShopProps) {
                   min={0}
                   max={59}
                   step={5}
-                  onChange={(value) => setStartTime(startTime.setMinute(value))}
+                  onChange={(value) => setStartTime({ ...startTime, minute: parseInt(value) })}
                 >
                   <NumberInputField />
                   <NumberInputStepper>
@@ -133,7 +140,7 @@ function AddShop({ position, isOpen, onClose }: AddShopProps) {
                   value={endTime.hour}
                   min={0}
                   max={23}
-                  onChange={(value) => setEndTime(endTime.setHour(value))}
+                  onChange={(value) => setEndTime({ ...endTime, hour: parseInt(value) })}
                 >
                   <NumberInputField />
                   <NumberInputStepper>
@@ -148,7 +155,7 @@ function AddShop({ position, isOpen, onClose }: AddShopProps) {
                   min={0}
                   max={59}
                   step={5}
-                  onChange={(value) => setEndTime(endTime.setMinute(value))}
+                  onChange={(value) => setEndTime({ ...endTime, minute: parseInt(value) })}
                 >
                   <NumberInputField />
                   <NumberInputStepper>
