@@ -39,8 +39,8 @@ const flavours = ["Ser", "Mak", "Mieszany", "Sezam", "Sól"];
 const users = ["Pan Piotrek", "Pan Kamil", "Pan Wiktor", "Pan Bartek", "Pan Wojtek", "Pan Basia"];
 
 function AddShop({ position, isOpen, onClose }: AddShopProps) {
-  const [date, setDate] = useState(new Date());
   const setNewMarker = useContext(MarkerSetter);
+
   const [flavourChecked, setFlavourChecked] = useState(
     flavours.map((f) => {
       return {
@@ -49,11 +49,14 @@ function AddShop({ position, isOpen, onClose }: AddShopProps) {
       } as Flavour;
     })
   );
-
-  const post = usePost();
-
+  const [date, setDate] = useState(new Date());
   const [startTime, setStartTime] = useState(new Time(8, 0));
   const [endTime, setEndTime] = useState(new Time(16, 0));
+  const [isCardChecked, setIsCheckedCard] = useState(false);
+
+  const cancelRef = useRef(null);
+
+  const post = usePost();
 
   const handleSubmit = () => {
     const body = {
@@ -74,15 +77,12 @@ function AddShop({ position, isOpen, onClose }: AddShopProps) {
     onClose();
   };
 
-  const [isCardChecked, setIsCheckedCard] = useState(false);
-
   const handleFlavoursToggled = (idx: number) => {
     const nextFlavourChecked = flavourChecked.map((f, index) =>
       index === idx ? { ...f, isChecked: !f.isChecked } : f
     );
     setFlavourChecked(nextFlavourChecked);
   };
-  const cancelRef = useRef(null);
   return (
     <AlertDialog isOpen={isOpen} onClose={onClose} leastDestructiveRef={cancelRef}>
       <AlertDialogOverlay>
