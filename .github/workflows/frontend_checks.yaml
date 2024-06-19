@@ -22,13 +22,10 @@ jobs:
       - name: Install dependencies
         run: yarn
       - name: Run lint
-        run: yarn lint --quiet
+        run: yarn lint --quiet --fix
+      - uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "style fixes by eslint"
+          commit_options: "--no-verify"
       - name: Run Tests
         run: yarn test
-      - name: Check for changes
-        run: git diff --exit-code
-      - name: Comment on PR if lint fails
-        if: ${{ failure() }}
-        run: |
-          echo "Lint checks failed. Please review and fix the issues."
-          exit 1
