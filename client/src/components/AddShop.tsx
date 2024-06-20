@@ -28,8 +28,6 @@ type Flavour = {
   isChecked: boolean;
 };
 
-const flavours = ["Ser", "Mak", "Mieszany", "Sezam", "Sól"];
-
 type AddShopProps = {
   position: LatLngLiteral;
   isOpen: boolean;
@@ -37,9 +35,10 @@ type AddShopProps = {
   // onAddShop: () => void;
   // shopData: { name: string; location: string; description: string; image: string };
 };
+const flavours = ["Ser", "Mak", "Mieszany", "Sezam", "Sól"];
+const users = ["Pan Piotrek", "Pan Kamil", "Pan Wiktor", "Pan Bartek", "Pan Wojtek", "Pan Basia"];
 
 function AddShop({ position, isOpen, onClose }: AddShopProps) {
-  const [date, setDate] = useState(new Date());
   const setNewMarker = useContext(MarkerSetter);
   const [flavourChecked, setFlavourChecked] = useState<Flavour[]>(
     flavours.map((f) => {
@@ -50,48 +49,32 @@ function AddShop({ position, isOpen, onClose }: AddShopProps) {
     })
   );
 
-  const prettyTime = (val: string) => {
-    if (val.length === 1) {
-      return "0" + val;
-    }
-    return val;
-  };
+
+  const [date, setDate] = useState(new Date());
+  const [startTime, setStartTime] = useState<ITime>({
+    hour: 8,
+    minute: 0,
+  });
+  const [endTime, setEndTime] = useState<ITime>({
+    hour: 16,
+    minute: 0,
+  });
+  const [isCardChecked, setIsCheckedCard] = useState(false);
+
+  const cancelRef = useRef(null);
 
   const post = usePost();
 
-  const users = [
-    "Pan Piotrek",
-    "Pan Kamil",
-    "Pan Wiktor",
-    "Pan Bartek",
-    "Pan Wojtek",
-    "Pan Basia",
-  ];
-
-  const [startTimeHour, setStartTimeHour] = useState("8");
-  const [startTimeMinute, setStartTimeMinute] = useState("0");
-
-  const [endTimeHour, setEndTimeHour] = useState("16");
-  const [endTimeMinute, setEndTimeMinute] = useState("0");
-
-  // const [endTimeHour, setEndTimeHour] = useState(16);
-  // const [endTimeMinute, setEndTimeMinute] = useState(0);
-
   const handleSubmit = () => {
-    // console.log("Start Time:", startTimeHour, ":", startTimeMinute);
-    // console.log("End Time:", endTimeHour, ":", endTimeMinute);
-    console.log(position);
     const body = {
       ...position,
-      name: users[Math.floor(Math.random() * users.length)],
+      name: users[Math.floor(Math.random() * users.length)], // ! temporary
       flavors: flavourChecked.filter((f) => f.isChecked).map((f) => f.name),
-      card_payment: isCheckedCard,
-      // time: [date.getUTCDate() + 1, date.getUTCMonth() + 1, date.getUTCFullYear()],
+      card_payment: isCardChecked,
       is_open_today: true,
-      start_time: prettyTime(startTimeHour) + ":" + prettyTime(startTimeMinute),
-      end_time: prettyTime(endTimeHour) + ":" + prettyTime(endTimeMinute),
+      start_time: prettyTime(startTime),
+      end_time: prettyTime(endTime),
     };
-    // console.log(body);
     post("/shops", body).catch(console.log);
     setNewMarker({
       ...body,
@@ -101,18 +84,13 @@ function AddShop({ position, isOpen, onClose }: AddShopProps) {
     onClose();
   };
 
-  const [isCheckedCard, setIsCheckedCard] = useState(false);
 
-  const handleTogglev2 = () => {
-    setIsCheckedCard(!isCheckedCard);
+  const handleFlavoursToggled = (idx: number) => {
+    const nextFlavourChecked = flavourChecked.map((f, index) =>
+      index === idx ? { ...f, isChecked: !f.isChecked } : f
+    );
+    setFlavourChecked(nextFlavourChecked);
   };
-
-  const handleToggle = (i: number) => {
-    flavourChecked[i].isChecked = !flavourChecked[i].isChecked;
-    setFlavourChecked([...flavourChecked]);
-  };
-
-  const cancelRef = useRef(null);
   return (
     <AlertDialog
       isOpen={isOpen}
@@ -136,10 +114,10 @@ function AddShop({ position, isOpen, onClose }: AddShopProps) {
                 <NumberInput
                   size="sm"
                   maxW={16}
-                  value={startTimeHour}
+                  value={startTime.hour}
                   min={0}
                   max={23}
-                  onChange={setStartTimeHour}
+                  onChange={(value) => setStartTime({ ...startTime, hour: parseInt(value) })}
                 >
                   <NumberInputField />
                   <NumberInputStepper>
@@ -150,11 +128,11 @@ function AddShop({ position, isOpen, onClose }: AddShopProps) {
                 <NumberInput
                   size="sm"
                   maxW={16}
-                  value={startTimeMinute}
+                  value={startTime.minute}
                   min={0}
                   max={59}
                   step={5}
-                  onChange={setStartTimeMinute}
+                  onChange={(value) => setStartTime({ ...startTime, minute: parseInt(value) })}
                 >
                   <NumberInputField />
                   <NumberInputStepper>
@@ -168,10 +146,10 @@ function AddShop({ position, isOpen, onClose }: AddShopProps) {
                 <NumberInput
                   size="sm"
                   maxW={16}
-                  value={endTimeHour}
+                  value={endTime.hour}
                   min={0}
                   max={23}
-                  onChange={setEndTimeHour}
+                  onChange={(value) => setEndTime({ ...endTime, hour: parseInt(value) })}
                 >
                   <NumberInputField />
                   <NumberInputStepper>
@@ -182,11 +160,11 @@ function AddShop({ position, isOpen, onClose }: AddShopProps) {
                 <NumberInput
                   size="sm"
                   maxW={16}
-                  value={endTimeMinute}
+                  value={endTime.minute}
                   min={0}
                   max={59}
                   step={5}
-                  onChange={setEndTimeMinute}
+                  onChange={(value) => setEndTime({ ...endTime, minute: parseInt(value) })}
                 >
                   <NumberInputField />
                   <NumberInputStepper>
@@ -208,6 +186,7 @@ function AddShop({ position, isOpen, onClose }: AddShopProps) {
                       onChange={() => {
                         handleToggle(i);
                       }}
+
                     >
                       {f.name}
                     </Checkbox>
@@ -217,9 +196,9 @@ function AddShop({ position, isOpen, onClose }: AddShopProps) {
             </CheckboxGroup>
             <FormLabel mt={2}>Płatności</FormLabel>
             <Checkbox
-              isChecked={isCheckedCard}
+              isChecked={isCardChecked}
               colorScheme="teal"
-              onChange={handleTogglev2}
+              onChange={() => setIsCheckedCard(!isCardChecked)}
             >
               Płatność kartą
             </Checkbox>
