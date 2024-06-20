@@ -7,11 +7,11 @@ repos:
         args: ["--fix"]
       # Run the formatter.
       - id: ruff-format
-# -   repo: local
-#     hooks:
-#     -   id: husky-run-pre-commit
-#         name: husky
-#         language: system
-#         entry: node_modules/.bin/husky-run pre-commit
-#         pass_filenames: false
-#         always_run: true
+  - repo: local
+    hooks:
+      - id: husky-run-pre-commit
+        name: husky
+        language: system
+        entry: bash -c "cd client && yarn lint-staged"
+        pass_filenames: false
+        always_run: true
