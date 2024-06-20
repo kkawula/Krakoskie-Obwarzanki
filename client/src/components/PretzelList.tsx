@@ -77,7 +77,6 @@ export default function PretzelList() {
                   default:
                     colorScheme = "gray";
                 }
-
                 return (
                   <Badge
                     key={index}
