@@ -22,6 +22,7 @@ import { SingleDatepicker } from "chakra-dayzed-datepicker";
 import { usePost } from "../hooks/usePost";
 import { MarkerSetter } from "./Map";
 import { type LatLngLiteral } from "leaflet";
+import { ITime, prettyTime } from "../utils/time";
 
 type Flavour = {
   name: string;
@@ -197,7 +198,7 @@ function AddShop({ position, isOpen, onClose }: AddShopProps) {
                       key={i}
                       isChecked={f.isChecked}
                       onChange={() => {
-                        handleToggle(i);
+                        handleFlavoursToggled(i);
                       }}
                     >
                       {f.name}
