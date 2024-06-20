@@ -31,7 +31,6 @@ export default function Widget() {
         }}
         show={show}
       />
-
       <Collapse in={show}>
         <Box w="350px">
           <Router>
