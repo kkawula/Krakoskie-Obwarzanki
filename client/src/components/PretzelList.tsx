@@ -1,5 +1,6 @@
 import { Box, Text, Flex, Badge } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
+
 type Seller = {
   id: string;
   name: string;
@@ -12,13 +13,14 @@ type Seller = {
 
 export default function PretzelList() {
   const [sellers, setSellers] = useState<Seller[]>([]);
+  const [radius, _setRadius] = useState(1000000);
 
-  const handleSellers = async () => {
+  const fetchSellersWithinRadius = async (radius: number) => {
     try {
       const body = JSON.stringify({
         lat: 50.048774,
         lng: 19.965303,
-        radius: 1000000,
+        radius,
       });
       const response = await fetch(`http://127.0.0.1:8000/shops/by_distance/`, {
         method: "POST",
@@ -40,8 +42,8 @@ export default function PretzelList() {
   };
 
   useEffect(() => {
-    handleSellers().catch(console.error);
-  }, []);
+    fetchSellersWithinRadius(radius).catch(console.error);
+  }, [radius]);
 
   return (
     <Box maxH="400px" overflowY="auto">
@@ -56,7 +58,7 @@ export default function PretzelList() {
             </Flex>
             <Flex direction="row">
               {seller.flavors.map((flavor, index) => {
-                let colorScheme;
+                let colorScheme: string;
                 let border = "0px";
                 switch (flavor) {
                   case "Ser":

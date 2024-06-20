@@ -6,10 +6,11 @@ export default function RegisterForm() {
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
 
+  const handleSubmit = () => {}; // TODO implement
   return (
     <Box
       as="form"
-      // onSubmit={handleSubmit}
+      onSubmit={handleSubmit}
       p="4"
       borderWidth="2px"
       borderRadius="md"

@@ -43,7 +43,7 @@ const users = [
   "Pan Wiktor",
   "Pan Bartek",
   "Pan Wojtek",
-  "Pan Basia",
+  "Pani Basia",
 ];
 
 function AddShop({ position, isOpen, onClose }: AddShopProps) {
@@ -211,7 +211,9 @@ function AddShop({ position, isOpen, onClose }: AddShopProps) {
             <Checkbox
               isChecked={isCardChecked}
               colorScheme="teal"
-              onChange={() => setIsCheckedCard(!isCardChecked)}
+              onChange={() =>
+                setIsCheckedCard((prevIsCardChecked) => !prevIsCardChecked)
+              }
             >
               Płatność kartą
             </Checkbox>

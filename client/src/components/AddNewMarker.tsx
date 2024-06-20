@@ -4,7 +4,7 @@ import AddShop from "./AddShop";
 import L, { type LatLngLiteral } from "leaflet";
 import icon from "../assets/icon_ob.png";
 
-const customIcon = new L.Icon({
+export const customIcon = new L.Icon({
   iconUrl: icon,
   iconSize: [36, 36],
 });
@@ -12,6 +12,7 @@ const customIcon = new L.Icon({
 function LocationMarker() {
   const [position, setPosition] = useState<LatLngLiteral | null>(null);
   const [setupOpen, setSetupOpen] = useState(false);
+
   const map = useMapEvents({
     click(e) {
       setPosition(e.latlng);
@@ -21,13 +22,11 @@ function LocationMarker() {
   });
 
   return (
-    <>
-      {position && (
+    position && (
+      <>
         <Marker key={position.lat} position={position} icon={customIcon}>
-          <Popup>You are here</Popup>
+          <Popup>You are here</Popup> {/* gdzie ten popup? */}
         </Marker>
-      )}
-      {position && (
         <AddShop
           position={position}
           isOpen={setupOpen}
@@ -35,8 +34,8 @@ function LocationMarker() {
             setSetupOpen(false);
           }}
         />
-      )}
-    </>
+      </>
+    )
   );
 }
 
