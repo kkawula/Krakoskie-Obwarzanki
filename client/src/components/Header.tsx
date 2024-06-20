@@ -1,10 +1,10 @@
 import { Flex, Heading, IconButton } from "@chakra-ui/react";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 
-interface HeaderProps {
+type HeaderProps = {
   handleToggle: () => void;
   show: boolean;
-}
+};
 
 const Header = ({ handleToggle, show }: HeaderProps) => {
   return (

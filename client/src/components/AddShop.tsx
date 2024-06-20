@@ -21,26 +21,33 @@ import { useContext, useRef, useState } from "react";
 import { SingleDatepicker } from "chakra-dayzed-datepicker";
 import { usePost } from "../hooks/usePost";
 import { MarkerSetter } from "./Map";
-import { LatLngLiteral } from "leaflet";
+import { type LatLngLiteral } from "leaflet";
 import { ITime, prettyTime } from "../utils/time";
 
-interface Flavour {
+type Flavour = {
   name: string;
   isChecked: boolean;
-}
-interface AddShopProps {
+};
+
+type AddShopProps = {
   position: LatLngLiteral;
   isOpen: boolean;
   onClose: () => void;
   // onAddShop: () => void;
   // shopData: { name: string; location: string; description: string; image: string };
-}
+};
 const flavours = ["Ser", "Mak", "Mieszany", "Sezam", "Sól"];
-const users = ["Pan Piotrek", "Pan Kamil", "Pan Wiktor", "Pan Bartek", "Pan Wojtek", "Pan Basia"];
+const users = [
+  "Pan Piotrek",
+  "Pan Kamil",
+  "Pan Wiktor",
+  "Pan Bartek",
+  "Pan Wojtek",
+  "Pan Basia",
+];
 
 function AddShop({ position, isOpen, onClose }: AddShopProps) {
   const setNewMarker = useContext(MarkerSetter);
-
   const [flavourChecked, setFlavourChecked] = useState<Flavour[]>(
     flavours.map((f) => {
       return {
@@ -91,24 +98,34 @@ function AddShop({ position, isOpen, onClose }: AddShopProps) {
     setFlavourChecked(nextFlavourChecked);
   };
   return (
-    <AlertDialog isOpen={isOpen} onClose={onClose} leastDestructiveRef={cancelRef}>
+    <AlertDialog
+      isOpen={isOpen}
+      onClose={onClose}
+      leastDestructiveRef={cancelRef}
+    >
       <AlertDialogOverlay>
         <AlertDialogContent mt={10}>
           <AlertDialogHeader>Nowe stoisko</AlertDialogHeader>
           <AlertDialogBody>
             <FormLabel>Data:</FormLabel>
-            <SingleDatepicker name="date-input" date={date} onDateChange={setDate} />
+            <SingleDatepicker
+              name="date-input"
+              date={date}
+              onDateChange={setDate}
+            />
 
             <FormControl>
               <FormLabel mt={4}>Godzina rozpoczęcia:</FormLabel>
-              <Stack shouldWrapChildren direction="row" align={"left"}>
+              <Stack shouldWrapChildren direction="row" align="left">
                 <NumberInput
                   size="sm"
                   maxW={16}
                   value={startTime.hour}
                   min={0}
                   max={23}
-                  onChange={(value) => setStartTime({ ...startTime, hour: parseInt(value) })}
+                  onChange={(value) =>
+                    setStartTime({ ...startTime, hour: parseInt(value) })
+                  }
                 >
                   <NumberInputField />
                   <NumberInputStepper>
@@ -123,7 +140,9 @@ function AddShop({ position, isOpen, onClose }: AddShopProps) {
                   min={0}
                   max={59}
                   step={5}
-                  onChange={(value) => setStartTime({ ...startTime, minute: parseInt(value) })}
+                  onChange={(value) =>
+                    setStartTime({ ...startTime, minute: parseInt(value) })
+                  }
                 >
                   <NumberInputField />
                   <NumberInputStepper>
@@ -133,14 +152,16 @@ function AddShop({ position, isOpen, onClose }: AddShopProps) {
                 </NumberInput>
               </Stack>
               <FormLabel mt={2}>Godzina zakończenia:</FormLabel>
-              <Stack shouldWrapChildren direction="row" align={"left"}>
+              <Stack shouldWrapChildren direction="row" align="left">
                 <NumberInput
                   size="sm"
                   maxW={16}
                   value={endTime.hour}
                   min={0}
                   max={23}
-                  onChange={(value) => setEndTime({ ...endTime, hour: parseInt(value) })}
+                  onChange={(value) =>
+                    setEndTime({ ...endTime, hour: parseInt(value) })
+                  }
                 >
                   <NumberInputField />
                   <NumberInputStepper>
@@ -155,7 +176,9 @@ function AddShop({ position, isOpen, onClose }: AddShopProps) {
                   min={0}
                   max={59}
                   step={5}
-                  onChange={(value) => setEndTime({ ...endTime, minute: parseInt(value) })}
+                  onChange={(value) =>
+                    setEndTime({ ...endTime, minute: parseInt(value) })
+                  }
                 >
                   <NumberInputField />
                   <NumberInputStepper>
@@ -168,13 +191,15 @@ function AddShop({ position, isOpen, onClose }: AddShopProps) {
 
             <FormLabel mt={2}>Dostępne smaki obwarzanków</FormLabel>
             <CheckboxGroup colorScheme="teal">
-              <VStack align={"start"}>
+              <VStack align="start">
                 {flavourChecked.map((f, i) => {
                   return (
                     <Checkbox
                       key={i}
                       isChecked={f.isChecked}
-                      onChange={() => handleFlavoursToggled(i)}
+                      onChange={() => {
+                        handleFlavoursToggled(i);
+                      }}
                     >
                       {f.name}
                     </Checkbox>

@@ -1,0 +1,41 @@
+name: Lint and Test on Pull Request Frontend
+on: pull_request
+
+defaults:
+  run:
+    working-directory: client
+jobs:
+  frontend-commit-checks:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    name: Checks before commit
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Read .nvmrc
+        run: echo "##[set-output name=NVMRC;]$(cat .nvmrc)"
+        id: nvm
+      - name: Use Node.js (.nvmrc)
+        uses: actions/setup-node@v4
+        with:
+          node-version: "${{ steps.nvm.outputs.NVMRC }}"
+      - name: Install dependencies
+        run: yarn
+      - name: Run prettier
+        run: yarn prettier --write .
+      - uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "style fixes by prettier"
+          commit_options: "--no-verify"
+      - name: Run lint
+        run: yarn lint --quiet --fix
+      - uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "style fixes by eslint"
+          commit_options: "--no-verify"
+      - name: Run Tests
+        run: yarn test
