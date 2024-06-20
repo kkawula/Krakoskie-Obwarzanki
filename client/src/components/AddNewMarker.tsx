@@ -4,6 +4,7 @@ import AddShop from "./AddShop";
 import L from "leaflet";
 import { LatLngLiteral } from "leaflet";
 import icon from "/src/assets/icon_ob.png";
+
 const customIcon = new L.Icon({
   iconUrl: icon,
   iconSize: [36, 36],
