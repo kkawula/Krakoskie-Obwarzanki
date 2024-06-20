@@ -36,7 +36,14 @@ type AddShopProps = {
   // shopData: { name: string; location: string; description: string; image: string };
 };
 const flavours = ["Ser", "Mak", "Mieszany", "Sezam", "Sól"];
-const users = ["Pan Piotrek", "Pan Kamil", "Pan Wiktor", "Pan Bartek", "Pan Wojtek", "Pan Basia"];
+const users = [
+  "Pan Piotrek",
+  "Pan Kamil",
+  "Pan Wiktor",
+  "Pan Bartek",
+  "Pan Wojtek",
+  "Pan Basia",
+];
 
 function AddShop({ position, isOpen, onClose }: AddShopProps) {
   const setNewMarker = useContext(MarkerSetter);
@@ -48,7 +55,6 @@ function AddShop({ position, isOpen, onClose }: AddShopProps) {
       };
     })
   );
-
 
   const [date, setDate] = useState(new Date());
   const [startTime, setStartTime] = useState<ITime>({
@@ -84,7 +90,6 @@ function AddShop({ position, isOpen, onClose }: AddShopProps) {
     onClose();
   };
 
-
   const handleFlavoursToggled = (idx: number) => {
     const nextFlavourChecked = flavourChecked.map((f, index) =>
       index === idx ? { ...f, isChecked: !f.isChecked } : f
@@ -117,7 +122,9 @@ function AddShop({ position, isOpen, onClose }: AddShopProps) {
                   value={startTime.hour}
                   min={0}
                   max={23}
-                  onChange={(value) => setStartTime({ ...startTime, hour: parseInt(value) })}
+                  onChange={(value) =>
+                    setStartTime({ ...startTime, hour: parseInt(value) })
+                  }
                 >
                   <NumberInputField />
                   <NumberInputStepper>
@@ -132,7 +139,9 @@ function AddShop({ position, isOpen, onClose }: AddShopProps) {
                   min={0}
                   max={59}
                   step={5}
-                  onChange={(value) => setStartTime({ ...startTime, minute: parseInt(value) })}
+                  onChange={(value) =>
+                    setStartTime({ ...startTime, minute: parseInt(value) })
+                  }
                 >
                   <NumberInputField />
                   <NumberInputStepper>
@@ -149,7 +158,9 @@ function AddShop({ position, isOpen, onClose }: AddShopProps) {
                   value={endTime.hour}
                   min={0}
                   max={23}
-                  onChange={(value) => setEndTime({ ...endTime, hour: parseInt(value) })}
+                  onChange={(value) =>
+                    setEndTime({ ...endTime, hour: parseInt(value) })
+                  }
                 >
                   <NumberInputField />
                   <NumberInputStepper>
@@ -164,7 +175,9 @@ function AddShop({ position, isOpen, onClose }: AddShopProps) {
                   min={0}
                   max={59}
                   step={5}
-                  onChange={(value) => setEndTime({ ...endTime, minute: parseInt(value) })}
+                  onChange={(value) =>
+                    setEndTime({ ...endTime, minute: parseInt(value) })
+                  }
                 >
                   <NumberInputField />
                   <NumberInputStepper>
@@ -186,7 +199,6 @@ function AddShop({ position, isOpen, onClose }: AddShopProps) {
                       onChange={() => {
                         handleToggle(i);
                       }}
-
                     >
                       {f.name}
                     </Checkbox>
