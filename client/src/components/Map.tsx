@@ -17,7 +17,7 @@ export type IMarker = {
   flavors: string[];
 };
 
-export const MarkerSetter = createContext<(marker: IMarker) => void>((_) => {});
+export const MarkerSetter = createContext<(marker: IMarker) => void>(() => {});
 
 export default function Map() {
   const Cracow = { lat: 50.061389, lng: 19.938333 };

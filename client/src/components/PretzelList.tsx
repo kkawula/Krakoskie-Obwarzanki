@@ -13,7 +13,7 @@ type Seller = {
 
 export default function PretzelList() {
   const [sellers, setSellers] = useState<Seller[]>([]);
-  const [radius, _setRadius] = useState(1000000);
+  const [radius] = useState(1000000);
 
   const fetchSellersWithinRadius = async (radius: number) => {
     try {
