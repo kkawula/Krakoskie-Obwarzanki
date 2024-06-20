@@ -56,7 +56,6 @@ function AddShop({ position, isOpen, onClose }: AddShopProps) {
       };
     })
   );
-
   const [date, setDate] = useState(new Date());
   const [startTime, setStartTime] = useState<ITime>({
     hour: 8,

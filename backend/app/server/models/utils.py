@@ -1,13 +1,14 @@
 from typing import Tuple
 
-from pydantic import BaseModel, Field, root_validator
+from pydantic import BaseModel, model_validator
+from typing_extensions import Literal
 
 
 class Point(BaseModel):
-    type: str = Field("Point", const=True)
+    type: str = Literal["Point"]
     coordinates: Tuple[float, float]
 
-    @root_validator(pre=True)
+    @model_validator(mode="before")
     def set_coordinates(cls, values):
         longitude = values.get("lng")
         latitude = values.get("lat")

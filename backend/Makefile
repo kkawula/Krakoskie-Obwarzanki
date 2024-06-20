@@ -14,10 +14,10 @@ venv/bin/activate: requirements.txt requirements-dev.txt
 	make install-dev
 
 install: requirements.txt
-	$(PIP) install -r requirements.txt
+	$(PIP) install -r requirements.txt --no-cache-dir
 
 install-dev: requirements-dev.txt
-	$(PIP) install -r requirements-dev.txt
+	$(PIP) install -r requirements-dev.txt --no-cache-dir
 	make pre-commit-install
 
 pre-commit-install: .pre-commit-config.yaml

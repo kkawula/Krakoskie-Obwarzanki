@@ -1,3 +1,5 @@
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse
@@ -6,7 +8,15 @@ from server.models.query import Query
 from server.models.shop import Shop, ShopWithDistance, ShopWithPosition
 from server.models.utils import Point
 
-app = FastAPI()
+
+@asynccontextmanager
+async def lifespan(_app: FastAPI):
+    await init_db()
+    yield
+
+
+app = FastAPI(lifespan=lifespan)
+
 
 origins = [
     # "http://localhost",
@@ -23,9 +33,9 @@ app.add_middleware(
 )
 
 
-@app.on_event("startup")
-async def start_db():
-    await init_db()
+# @app.on_event("startup")
+# async def start_db():
+#     await init_db()
 
 
 @app.get("/", tags=["Root"])
