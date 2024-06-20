@@ -7,13 +7,16 @@
     "start": "vite",
     "build": "tsc && vite build",
     "test": "echo \"No test specified yet\" && exit 0",
-    "lint": "eslint . --max-warnings=0 --fix",
-    "pretty": "prettier --write .",
+    "lint": "eslint . --max-warnings=0 --fix ",
+    "prettier": "prettier --write './**/*.{js,jsx,ts,tsx}'",
     "preview": "vite preview",
     "prepare": "cd .. && husky install client/.husky"
   },
   "lint-staged": {
-    "**/*": "prettier --write --ignore-unknown"
+    "*.{ts,tsx,js,jsx}": [
+      "yarn lint --no-warn-ignored",
+      "yarn prettier"
+    ]
   },
   "dependencies": {
     "@chakra-ui/react": "^2.8.2",

@@ -1,4 +1,2 @@
 cd client
-yarn test
-yarn pretty
-yarn lint
+yarn lint-staged
