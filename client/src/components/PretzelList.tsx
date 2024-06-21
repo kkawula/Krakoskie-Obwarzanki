@@ -1,53 +1,41 @@
 import { Box, Text, Flex, Badge } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
-
-type Seller = {
-  id: string;
-  name: string;
-  lng: number;
-  lat: number;
-  card_payment: boolean;
-  flavors: string[];
-  distance: number;
-};
+import { useContext, useEffect } from "react";
+import { useFetchShops } from "../hooks/useFetchShops";
+import { LocationOnMapContext } from "../App";
+import toast from "react-hot-toast";
 
 export default function PretzelList() {
-  const [sellers, setSellers] = useState<Seller[]>([]);
-  const [radius] = useState(1000000);
+  const { locationOnMap } = useContext(LocationOnMapContext);
 
-  const fetchSellersWithinRadius = async (radius: number) => {
-    try {
-      const body = JSON.stringify({
-        lat: 50.048774,
-        lng: 19.965303,
-        radius,
-      });
-      const response = await fetch(`http://127.0.0.1:8000/shops/by_distance/`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body,
-      });
-      if (response.ok) {
-        const data: Seller[] = await response.json();
-        setSellers(data);
-        console.log("Sellers fetched:", data);
-      } else {
-        console.error("Failed to fetch sellers:", response.statusText);
-      }
-    } catch (error) {
-      console.error("An error occurred while fetching sellers:", error);
-    }
-  };
+  const {
+    data: shops,
+    isLoading,
+    isError,
+    error,
+  } = useFetchShops(locationOnMap);
 
   useEffect(() => {
-    fetchSellersWithinRadius(radius).catch(console.error);
-  }, [radius]);
+    if (isError) {
+      toast.error(`Something went wrong: ${error.message}`);
+    }
+  }, [isError]);
+
+  if (isLoading)
+    return (
+      <Box>
+        <Text>Loading...</Text>
+      </Box>
+    );
+  if (isError)
+    return (
+      <Box>
+        <Text>Error: {error.message}</Text>
+      </Box>
+    );
 
   return (
     <Box maxH="400px" overflowY="auto">
-      {sellers.map((seller, index) => (
+      {shops?.map((seller, index) => (
         <Box key={index} p="4" mb="4" borderWidth="1px" borderRadius="lg">
           <Flex direction="column">
             <Flex direction="row">

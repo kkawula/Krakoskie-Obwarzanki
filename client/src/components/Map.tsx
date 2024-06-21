@@ -6,7 +6,10 @@ import {
   ZoomControl,
 } from "react-leaflet";
 import LocationMarker, { customIcon } from "./AddNewMarker";
-import { createContext, useEffect, useState } from "react";
+import { createContext, useContext } from "react";
+import { LocationOnMapContext, defaultLocation } from "../App";
+import { useFetchShops } from "../hooks/useFetchShops";
+import { Alert, AlertDescription, AlertTitle } from "@chakra-ui/react";
 
 export type IMarker = {
   id: string;
@@ -17,54 +20,43 @@ export type IMarker = {
   flavors: string[];
 };
 
-export const MarkerSetter = createContext<(marker: IMarker) => void>(() => {});
+export const MarkerSetter = createContext<(marker: IMarker) => void>(() => {
+  throw new Error("MarkerSetter not implemented");
+});
 
-export default function Map() {
-  const Cracow = { lat: 50.061389, lng: 19.938333 };
+function Map() {
+  const { locationOnMap } = useContext(LocationOnMapContext);
 
-  const [markers, setMarkers] = useState<IMarker[]>([]);
-  const [newMarker, setNewMarker] = useState<IMarker | null>(null);
-
-  const handleMarker = async () => {
-    try {
-      const response = await fetch(`http://127.0.0.1:8000/shops`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      if (response.ok) {
-        const data: IMarker[] = await response.json();
-        setMarkers(data);
-        console.log("Markers fetched:", data);
-      } else {
-        console.error("Failed to fetch marker:", response.statusText);
-      }
-    } catch (error) {
-      console.error("An error occurred while fetching marker:", error);
-    }
-  };
-
-  useEffect(() => {
-    handleMarker().catch(console.error);
-  }, [newMarker]);
+  const { data: shops, isError, error } = useFetchShops(locationOnMap);
 
   return (
-    <MapContainer center={Cracow} zoom={14} zoomControl={false}>
+    <MapContainer
+      center={defaultLocation.location}
+      zoom={14}
+      zoomControl={false}
+    >
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
 
-      <MarkerSetter.Provider value={setNewMarker}>
-        <LocationMarker />
-      </MarkerSetter.Provider>
-      {markers.map((marker, index) => (
-        <Marker key={index} position={marker} icon={customIcon}>
-          <Popup>{marker.name}</Popup>
+      <LocationMarker />
+
+      {isError && (
+        <Alert>
+          <AlertTitle> Error when fetching </AlertTitle>
+          <AlertDescription>Error: {error.message}</AlertDescription>
+        </Alert>
+      )}
+
+      {shops?.map((shop, index) => (
+        <Marker key={index} position={shop} icon={customIcon}>
+          <Popup>{shop.name}</Popup>
         </Marker>
       ))}
       <ZoomControl position="topright" />
     </MapContainer>
   );
 }
+
+export default Map;
