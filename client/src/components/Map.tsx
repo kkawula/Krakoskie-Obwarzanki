@@ -5,10 +5,9 @@ import {
   Popup,
   ZoomControl,
 } from "react-leaflet";
-import L from "leaflet";
-import LocationMarker from "./AddNewMarker";
-import icon from "../assets/icon_ob.png";
+import LocationMarker, { customIcon } from "./AddNewMarker";
 import { createContext, useEffect, useState } from "react";
+
 export type IMarker = {
   id: string;
   name: string;
@@ -20,22 +19,11 @@ export type IMarker = {
 
 export const MarkerSetter = createContext<(marker: IMarker) => void>(() => {});
 
-const customIcon = new L.Icon({
-  iconUrl: icon,
-  iconSize: [36, 36],
-});
 export default function Map() {
   const Cracow = { lat: 50.061389, lng: 19.938333 };
-  // const positions = [
-  //   { lat: 50.061389, lng: 19.938333, popupText: "Pyszne obwarzaki" },
-  //   { lat: 50.065723, lng: 19.919415, popupText: "Pyszne obwarzaki" },
-  //   { lat: 50.064718, lng: 19.945654, popupText: "Pyszne obwarzaki" },
-  //   { lat: 50.064389, lng: 19.91333, popupText: "Pyszne obwarzaki" },
-  //   { lat: 50.069723, lng: 19.959415, popupText: "Pyszne obwarzaki" },
-  //   { lat: 50.064418, lng: 19.95454, popupText: "Pyszne obwarzaki" },
-  // ];
 
   const [markers, setMarkers] = useState<IMarker[]>([]);
+  const [newMarker, setNewMarker] = useState<IMarker | null>(null);
 
   const handleMarker = async () => {
     try {
@@ -48,7 +36,6 @@ export default function Map() {
       if (response.ok) {
         const data: IMarker[] = await response.json();
         setMarkers(data);
-        console.log("Markers fetched:", data);
       } else {
         console.error("Failed to fetch marker:", response.statusText);
       }
@@ -56,14 +43,7 @@ export default function Map() {
       console.error("An error occurred while fetching marker:", error);
     }
   };
-  const [newMarker, setNewMarker] = useState<IMarker>({
-    id: "",
-    name: "",
-    lng: 0,
-    lat: 0,
-    card_payment: false,
-    flavors: [],
-  });
+
   useEffect(() => {
     handleMarker().catch(console.error);
   }, [newMarker]);
@@ -74,11 +54,12 @@ export default function Map() {
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
+
       <MarkerSetter.Provider value={setNewMarker}>
         <LocationMarker />
       </MarkerSetter.Provider>
       {markers.map((marker, index) => (
-        <Marker key={index} position={{ ...marker }} icon={customIcon}>
+        <Marker key={index} position={marker} icon={customIcon}>
           <Popup>{marker.name}</Popup>
         </Marker>
       ))}

@@ -1,5 +1,6 @@
 import { Box, Text, Flex, Badge } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
+
 type Seller = {
   id: string;
   name: string;
@@ -10,17 +11,36 @@ type Seller = {
   distance: number;
 };
 
+enum Flavor {
+  Ser = "Ser",
+  Mak = "Mak",
+  Mieszany = "Mieszany",
+  Sól = "Sól",
+}
+
+const colorSchemeMap: { [key in Flavor]?: string } = {
+  [Flavor.Ser]: "yellow",
+  [Flavor.Mak]: "green",
+  [Flavor.Mieszany]: "pink",
+  [Flavor.Sól]: "white",
+};
+
+const borderMap: { [key in Flavor]?: string } = {
+  [Flavor.Sól]: "1px",
+};
+
 export default function PretzelList() {
   const [sellers, setSellers] = useState<Seller[]>([]);
+  const radius: number = 1000000;
 
-  const handleSellers = async () => {
+  const fetchSellersWithinRadius = async (radius: number) => {
     try {
       const body = JSON.stringify({
         lat: 50.048774,
         lng: 19.965303,
-        radius: 1000000,
+        radius,
       });
-      const response = await fetch(`http://127.0.0.1:8000/shops/by_distance/`, {
+      const response = await fetch("http://127.0.0.1:8000/shops/by_distance/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -30,7 +50,6 @@ export default function PretzelList() {
       if (response.ok) {
         const data: Seller[] = await response.json();
         setSellers(data);
-        console.log("Sellers fetched:", data);
       } else {
         console.error("Failed to fetch sellers:", response.statusText);
       }
@@ -40,8 +59,8 @@ export default function PretzelList() {
   };
 
   useEffect(() => {
-    handleSellers().catch(console.error);
-  }, []);
+    fetchSellersWithinRadius(radius).catch(console.error);
+  }, [radius]);
 
   return (
     <Box maxH="400px" overflowY="auto">
@@ -50,38 +69,18 @@ export default function PretzelList() {
           <Flex direction="column">
             <Flex direction="row">
               <Text fontSize="s" fontWeight="bold" marginRight={3}>
-                {`${seller.name}`}
+                {seller.name}
               </Text>
               <Text>{`${(seller.distance / 1000).toFixed(2)} km`}</Text>
             </Flex>
             <Flex direction="row">
               {seller.flavors.map((flavor, index) => {
-                let colorScheme;
-                let border = "0px";
-                switch (flavor) {
-                  case "Ser":
-                    colorScheme = "yellow";
-                    break;
-                  case "Mak":
-                    colorScheme = "green";
-                    break;
-                  case "Mieszany":
-                    colorScheme = "pink";
-                    break;
-                  case "Sól":
-                    colorScheme = "white";
-                    border = "1px";
-                    break;
-                  default:
-                    colorScheme = "gray";
-                }
-
                 return (
                   <Badge
                     key={index}
-                    colorScheme={colorScheme}
+                    colorScheme={colorSchemeMap[flavor as Flavor] || "gray"}
                     width="min"
-                    border={border}
+                    border={borderMap[flavor as Flavor] || "0px"}
                     marginRight={1}
                   >
                     {flavor}

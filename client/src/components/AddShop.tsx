@@ -21,7 +21,7 @@ import { useContext, useRef, useState } from "react";
 import { SingleDatepicker } from "chakra-dayzed-datepicker";
 import { usePost } from "../hooks/usePost";
 import { MarkerSetter } from "./Map";
-import { type LatLngLiteral } from "leaflet";
+import { LatLngLiteral } from "leaflet";
 import { ITime, prettyTime } from "../utils/time";
 
 type Flavour = {
@@ -36,6 +36,7 @@ type AddShopProps = {
   // onAddShop: () => void;
   // shopData: { name: string; location: string; description: string; image: string };
 };
+
 const flavours = ["Ser", "Mak", "Mieszany", "Sezam", "Sól"];
 const users = [
   "Pan Piotrek",
@@ -43,20 +44,17 @@ const users = [
   "Pan Wiktor",
   "Pan Bartek",
   "Pan Wojtek",
-  "Pan Basia",
+  "Pani Basia",
 ];
 
 function AddShop({ position, isOpen, onClose }: AddShopProps) {
   const setNewMarker = useContext(MarkerSetter);
   const [flavourChecked, setFlavourChecked] = useState<Flavour[]>(
-    flavours.map((f) => {
-      return {
-        name: f,
-        isChecked: false,
-      };
-    })
+    flavours.map((f) => ({
+      name: f,
+      isChecked: false,
+    }))
   );
-
   const [date, setDate] = useState(new Date());
   const [startTime, setStartTime] = useState<ITime>({
     hour: 8,
@@ -66,7 +64,7 @@ function AddShop({ position, isOpen, onClose }: AddShopProps) {
     hour: 16,
     minute: 0,
   });
-  const [isCardChecked, setIsCheckedCard] = useState(false);
+  const [isCardChecked, setIsCardChecked] = useState(false);
 
   const cancelRef = useRef(null);
 
@@ -75,7 +73,7 @@ function AddShop({ position, isOpen, onClose }: AddShopProps) {
   const handleSubmit = () => {
     const body = {
       ...position,
-      name: users[Math.floor(Math.random() * users.length)], // ! temporary
+      name: users[Math.floor(Math.random() * users.length)],
       flavors: flavourChecked.filter((f) => f.isChecked).map((f) => f.name),
       card_payment: isCardChecked,
       is_open_today: true,
@@ -97,6 +95,7 @@ function AddShop({ position, isOpen, onClose }: AddShopProps) {
     );
     setFlavourChecked(nextFlavourChecked);
   };
+
   return (
     <AlertDialog
       isOpen={isOpen}
@@ -192,26 +191,24 @@ function AddShop({ position, isOpen, onClose }: AddShopProps) {
             <FormLabel mt={2}>Dostępne smaki obwarzanków</FormLabel>
             <CheckboxGroup colorScheme="teal">
               <VStack align="start">
-                {flavourChecked.map((f, i) => {
-                  return (
-                    <Checkbox
-                      key={i}
-                      isChecked={f.isChecked}
-                      onChange={() => {
-                        handleFlavoursToggled(i);
-                      }}
-                    >
-                      {f.name}
-                    </Checkbox>
-                  );
-                })}
+                {flavourChecked.map((f, i) => (
+                  <Checkbox
+                    key={i}
+                    isChecked={f.isChecked}
+                    onChange={() => handleFlavoursToggled(i)}
+                  >
+                    {f.name}
+                  </Checkbox>
+                ))}
               </VStack>
             </CheckboxGroup>
             <FormLabel mt={2}>Płatności</FormLabel>
             <Checkbox
               isChecked={isCardChecked}
               colorScheme="teal"
-              onChange={() => setIsCheckedCard(!isCardChecked)}
+              onChange={() =>
+                setIsCardChecked((prevIsCardChecked) => !prevIsCardChecked)
+              }
             >
               Płatność kartą
             </Checkbox>
