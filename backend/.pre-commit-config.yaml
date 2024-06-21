@@ -10,7 +10,7 @@ repos:
   - repo: local
     hooks:
       - id: husky-run-pre-commit
-        name: husky
+        name: client-pre-commit
         language: system
         entry: bash -c "cd client && yarn lint-staged"
         pass_filenames: false

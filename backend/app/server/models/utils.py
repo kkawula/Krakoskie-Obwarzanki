@@ -5,13 +5,13 @@ from typing_extensions import Literal
 
 
 class Point(BaseModel):
-    type: str = Literal["Point"]
+    type: Literal["Point"] = "Point"
     coordinates: Tuple[float, float]
 
     @model_validator(mode="before")
     def set_coordinates(cls, values):
-        longitude = values.get("lng")
-        latitude = values.get("lat")
-        if longitude and latitude:
-            values["coordinates"] = [longitude, latitude]
+        lng = values.get("lng")
+        lat = values.get("lat")
+        if lng and lat:
+            values["coordinates"] = [lng, lat]
         return values

@@ -33,11 +33,6 @@ app.add_middleware(
 )
 
 
-# @app.on_event("startup")
-# async def start_db():
-#     await init_db()
-
-
 @app.get("/", tags=["Root"])
 async def root():
     return RedirectResponse(url="/docs")
@@ -50,7 +45,7 @@ async def all_shops():
 
 
 @app.post("/shops", tags=["Shops"], response_model=ShopWithPosition)
-async def create_shop(shop: Shop):
+async def create_shop(shop: ShopWithPosition):
     await shop.insert()
     return shop
 
@@ -64,13 +59,13 @@ async def get_shop(shop_id: str):
 @app.post("/shops/by_distance", tags=["Shops"], response_model=list[ShopWithDistance])
 async def get_shops_by_dist(query: Query.ShopsByDistance):
     radius = query.radius
-    point = Point(**query.dict())
+    point = Point(**query.model_dump())
 
     return await Shop.aggregate(
         [
             {
                 "$geoNear": {
-                    "near": point.dict(),
+                    "near": point.model_dump(),
                     "distanceField": "distance",
                     "maxDistance": radius,
                 }
@@ -83,13 +78,13 @@ async def get_shops_by_dist(query: Query.ShopsByDistance):
 @app.post("/shops/by_number", tags=["Shops"], response_model=list[ShopWithDistance])
 async def get_n_nearest_shops(query: Query.ShopsByNumber):
     n = query.n_closest
-    point = Point(**query.dict())
+    point = Point(**query.model_dump())
 
     return await Shop.aggregate(
         [
             {
                 "$geoNear": {
-                    "near": point.dict(),
+                    "near": point.model_dump(),
                     "distanceField": "distance",
                 }
             }
