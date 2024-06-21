@@ -1,12 +1,19 @@
 import { Box, Button, FormControl, FormLabel, Input } from "@chakra-ui/react";
-import { useState } from "react";
+import { useRef } from "react";
 
+// TODO: Add Formik library
 export default function RegisterForm() {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [email, setEmail] = useState("");
+  const usernameRef = useRef<HTMLInputElement>(null);
+  const passwordRef = useRef<HTMLInputElement>(null);
+  const emailRef = useRef<HTMLInputElement>(null);
 
-  const handleSubmit = () => {}; // TODO implement
+  const handleSubmit = () => {
+    // const username = usernameRef.current?.value;
+    // const password = passwordRef.current?.value;
+    // const email = emailRef.current?.value;
+    // TODO: Implement form submission logic
+  };
+
   return (
     <Box
       as="form"
@@ -18,33 +25,15 @@ export default function RegisterForm() {
     >
       <FormControl id="username" isRequired>
         <FormLabel>Imię i Nazwisko</FormLabel>
-        <Input
-          type="text"
-          value={username}
-          onChange={(e) => {
-            setUsername(e.target.value);
-          }}
-        />
+        <Input type="text" ref={usernameRef} />
       </FormControl>
       <FormControl id="email" isRequired mt={4}>
         <FormLabel>Email</FormLabel>
-        <Input
-          type="email"
-          value={email}
-          onChange={(e) => {
-            setEmail(e.target.value);
-          }}
-        />
+        <Input type="email" ref={emailRef} />
       </FormControl>
       <FormControl id="password" isRequired mt={4}>
         <FormLabel>Hasło</FormLabel>
-        <Input
-          type="password"
-          value={password}
-          onChange={(e) => {
-            setPassword(e.target.value);
-          }}
-        />
+        <Input type="password" ref={passwordRef} />
       </FormControl>
       <Button mt={4} type="submit">
         Zarejestruj się

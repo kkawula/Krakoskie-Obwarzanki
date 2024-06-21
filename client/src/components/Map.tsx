@@ -36,7 +36,6 @@ export default function Map() {
       if (response.ok) {
         const data: IMarker[] = await response.json();
         setMarkers(data);
-        console.log("Markers fetched:", data);
       } else {
         console.error("Failed to fetch marker:", response.statusText);
       }
