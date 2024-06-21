@@ -50,7 +50,6 @@ class ShopWithPosition(Shop):
     lng: float
 
     def __init__(self, *a, **kw):
-        print("init with position")
         super().__init__(*a, **kw)
         location = kw.get("location")
         if location:
