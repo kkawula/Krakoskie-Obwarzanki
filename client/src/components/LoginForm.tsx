@@ -22,8 +22,6 @@ export default function LoginForm() {
     // TODO: Implement form submission logic
   };
 
-  const handleSubmit = () => {}; // TODO implement
-
   return (
     <Box
       as="form"

@@ -14,7 +14,6 @@ export default function RegisterForm() {
     // TODO: Implement form submission logic
   };
 
-  const handleSubmit = () => {}; // TODO implement
   return (
     <Box
       as="form"
