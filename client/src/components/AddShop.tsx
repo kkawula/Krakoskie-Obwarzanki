@@ -23,10 +23,6 @@ import { type LatLngLiteral } from "leaflet";
 import { Time, prettyTime } from "../utils/time";
 import { useAddShopMutation } from "../hooks/useFetchShops";
 
-type Flavour = {
-  name: string;
-  isChecked: boolean;
-};
 export type NewShop = {
   lat: number;
   lng: number;
@@ -37,10 +33,9 @@ export type NewShop = {
   start_time: string;
   end_time: string;
 };
-type AddShopProps = {
-  position: LatLngLiteral;
-  isOpen: boolean;
-  onClose: () => void;
+type Flavour = {
+  name: string;
+  isChecked: boolean;
 };
 
 const flavours = ["Ser", "Mak", "Mieszany", "Sezam", "Sól"];
@@ -53,7 +48,15 @@ const users = [
   "Pani Basia",
 ];
 
-function AddShop({ position, isOpen, onClose }: AddShopProps) {
+function AddShop({
+  position,
+  isOpen,
+  onClose,
+}: {
+  position: LatLngLiteral;
+  isOpen: boolean;
+  onClose: () => void;
+}) {
   const { mutateAsync: addShop } = useAddShopMutation();
 
   const [flavourChecked, setFlavourChecked] = useState<Flavour[]>(
