@@ -1,8 +1,8 @@
 import { Box, Text, Flex, Badge } from "@chakra-ui/react";
 import { useContext, useEffect } from "react";
 import { useFetchShops } from "../hooks/useFetchShops";
-import { LocationOnMapContext } from "../App";
 import toast from "react-hot-toast";
+import { LocationOnMapContext } from "../context/locationContext";
 
 enum Flavor {
   Ser = "Ser",

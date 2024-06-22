@@ -26,7 +26,7 @@ function LocationMarker() {
     position && (
       <>
         <Marker key={position.lat} position={position} icon={customIcon}>
-          <Popup>You are here</Popup> {/* gdzie ten popup? */}
+          <Popup>You are here</Popup>
         </Marker>
         <AddShop
           position={position}
