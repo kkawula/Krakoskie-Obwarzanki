@@ -8,7 +8,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import RegisterForm from "./RegisterForm";
 
 export default function Widget() {
-  const [show, setShow] = useState(true);
+  const [show, setShow] = useState(false);
 
   return (
     <Box

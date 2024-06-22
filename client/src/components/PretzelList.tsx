@@ -4,6 +4,24 @@ import { useFetchShops } from "../hooks/useFetchShops";
 import { LocationOnMapContext } from "../App";
 import toast from "react-hot-toast";
 
+enum Flavor {
+  Ser = "Ser",
+  Mak = "Mak",
+  Mieszany = "Mieszany",
+  Sól = "Sól",
+}
+
+const colorSchemeMap: { [key in Flavor]?: string } = {
+  [Flavor.Ser]: "yellow",
+  [Flavor.Mak]: "green",
+  [Flavor.Mieszany]: "pink",
+  [Flavor.Sól]: "white",
+};
+
+const borderMap: { [key in Flavor]?: string } = {
+  [Flavor.Sól]: "1px",
+};
+
 export default function PretzelList() {
   const { locationOnMap } = useContext(LocationOnMapContext);
 
@@ -40,37 +58,18 @@ export default function PretzelList() {
           <Flex direction="column">
             <Flex direction="row">
               <Text fontSize="s" fontWeight="bold" marginRight={3}>
-                {`${seller.name}`}
+                {seller.name}
               </Text>
               <Text>{`${(seller.distance / 1000).toFixed(2)} km`}</Text>
             </Flex>
             <Flex direction="row">
               {seller.flavors.map((flavor, index) => {
-                let colorScheme: string;
-                let border = "0px";
-                switch (flavor) {
-                  case "Ser":
-                    colorScheme = "yellow";
-                    break;
-                  case "Mak":
-                    colorScheme = "green";
-                    break;
-                  case "Mieszany":
-                    colorScheme = "pink";
-                    break;
-                  case "Sól":
-                    colorScheme = "white";
-                    border = "1px";
-                    break;
-                  default:
-                    colorScheme = "gray";
-                }
                 return (
                   <Badge
                     key={index}
-                    colorScheme={colorScheme}
+                    colorScheme={colorSchemeMap[flavor as Flavor] || "gray"}
                     width="min"
-                    border={border}
+                    border={borderMap[flavor as Flavor] || "0px"}
                     marginRight={1}
                   >
                     {flavor}

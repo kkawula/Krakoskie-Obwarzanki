@@ -6,23 +6,23 @@ import {
   ZoomControl,
 } from "react-leaflet";
 import LocationMarker, { customIcon } from "./AddNewMarker";
-import { createContext, useContext } from "react";
+import { useContext } from "react";
 import { LocationOnMapContext, defaultLocation } from "../App";
 import { useFetchShops } from "../hooks/useFetchShops";
 import { Alert, AlertDescription, AlertTitle } from "@chakra-ui/react";
 
-export type IMarker = {
-  id: string;
-  name: string;
-  lng: number;
-  lat: number;
-  card_payment: boolean;
-  flavors: string[];
-};
+// export type IMarker = {
+//   id: string;
+//   name: string;
+//   lng: number;
+//   lat: number;
+//   card_payment: boolean;
+//   flavors: string[];
+// };
 
-export const MarkerSetter = createContext<(marker: IMarker) => void>(() => {
-  throw new Error("MarkerSetter not implemented");
-});
+// export const MarkerSetter = createContext<(marker: IMarker) => void>(() => {
+//   throw new Error("MarkerSetter not implemented");
+// });
 
 function Map() {
   const { locationOnMap } = useContext(LocationOnMapContext);
