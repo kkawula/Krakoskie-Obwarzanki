@@ -4,7 +4,9 @@ import certifi
 import motor.motor_asyncio
 from beanie import init_beanie
 from dotenv import load_dotenv
+from server.models.password import Password
 from server.models.shop import Shop
+from server.models.user import User
 
 
 async def init_db():
@@ -29,4 +31,4 @@ async def init_db():
     shop_collection = database.get_collection("Shop")
     await shop_collection.create_index([("location", "2dsphere")])
 
-    await init_beanie(database=database, document_models=[Shop])
+    await init_beanie(database=database, document_models=[Shop, User, Password])

@@ -29,3 +29,12 @@ class Query:
                     "n_closest": 5,
                 }
             }
+
+    class UserRegister(BaseModel):
+        username: str
+        password: str
+
+        class Config:
+            json_schema_extra = {
+                "example": {"username": "user", "password": "password"}
+            }
