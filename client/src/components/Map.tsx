@@ -5,19 +5,18 @@ import {
   Popup,
   ZoomControl,
 } from "react-leaflet";
-import LocationMarker, { customIcon } from "./AddNewMarker";
-import { useContext } from "react";
-import { useFetchShops } from "../hooks/useFetchShops";
+import LocationMarker, { customIcon } from "./LocationMarker";
+import { useShopsQuery } from "../hooks/useShopsQuery";
 import { Alert, AlertDescription, AlertTitle } from "@chakra-ui/react";
 import {
-  LocationOnMapContext,
   defaultLocation,
-} from "../context/locationContext";
+  useLocationOnMapContext,
+} from "../context/locationContextProvider";
 
 function Map() {
-  const { locationOnMap } = useContext(LocationOnMapContext);
+  const { locationOnMap } = useLocationOnMapContext();
 
-  const { data: shops, isError, error } = useFetchShops(locationOnMap);
+  const { data: shops, isError, error } = useShopsQuery(locationOnMap);
 
   return (
     <MapContainer

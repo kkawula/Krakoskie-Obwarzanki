@@ -1,8 +1,8 @@
 import { Box, Text, Flex, Badge } from "@chakra-ui/react";
-import { useContext, useEffect } from "react";
-import { useFetchShops } from "../hooks/useFetchShops";
+import { useEffect } from "react";
+import { useShopsQuery } from "../hooks/useShopsQuery";
 import toast from "react-hot-toast";
-import { LocationOnMapContext } from "../context/locationContext";
+import { useLocationOnMapContext } from "../context/locationContextProvider";
 
 enum Flavor {
   Ser = "Ser",
@@ -23,14 +23,14 @@ const borderMap: { [key in Flavor]?: string } = {
 };
 
 export default function PretzelList() {
-  const { locationOnMap } = useContext(LocationOnMapContext);
+  const { locationOnMap } = useLocationOnMapContext();
 
   const {
     data: shops,
     isLoading,
     isError,
     error,
-  } = useFetchShops(locationOnMap);
+  } = useShopsQuery(locationOnMap);
 
   useEffect(() => {
     if (isError) {

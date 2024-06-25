@@ -2,12 +2,8 @@ import "./App.css";
 import { Center } from "@chakra-ui/react";
 import Map from "./components/Map.tsx";
 import Widget from "./components/Widget";
-import { useState } from "react";
 import { Toaster } from "react-hot-toast";
-import {
-  LocationOnMapContext,
-  defaultLocation,
-} from "./context/locationContext.ts";
+import { LocationOnMapProvider } from "./context/locationContextProvider.tsx";
 
 export type Shop = {
   id: string;
@@ -20,19 +16,13 @@ export type Shop = {
 };
 
 function App() {
-  const [locationOnMap, setLocationOnMap] = useState(defaultLocation);
   return (
     <Center>
       <Toaster />
-      <LocationOnMapContext.Provider
-        value={{
-          locationOnMap,
-          setLocationOnMap,
-        }}
-      >
+      <LocationOnMapProvider>
         <Map />
         <Widget />
-      </LocationOnMapContext.Provider>
+      </LocationOnMapProvider>
     </Center>
   );
 }

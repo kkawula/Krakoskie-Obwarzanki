@@ -21,7 +21,7 @@ import { useRef, useState } from "react";
 import { SingleDatepicker } from "chakra-dayzed-datepicker";
 import { type LatLngLiteral } from "leaflet";
 import { Time, prettyTime } from "../utils/time";
-import { useAddShopMutation } from "../hooks/useFetchShops";
+import { useAddShopMutation } from "../hooks/useShopsQuery";
 
 export type NewShop = {
   lat: number;
@@ -48,7 +48,7 @@ const users = [
   "Pani Basia",
 ];
 
-function AddShop({
+function NewShopForm({
   position,
   isOpen,
   onClose,
@@ -230,4 +230,4 @@ function AddShop({
   );
 }
 
-export default AddShop;
+export default NewShopForm;

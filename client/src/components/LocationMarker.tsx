@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Marker, Popup, useMapEvents } from "react-leaflet";
-import AddShop from "./AddShop";
+import NewShopForm from "./NewShopForm";
 import L, { LatLngLiteral } from "leaflet";
 import icon from "../assets/icon_ob.png";
 
@@ -28,7 +28,7 @@ function LocationMarker() {
         <Marker key={position.lat} position={position} icon={customIcon}>
           <Popup>You are here</Popup>
         </Marker>
-        <AddShop
+        <NewShopForm
           position={position}
           isOpen={isAddingNewShopOpen}
           onClose={() => {

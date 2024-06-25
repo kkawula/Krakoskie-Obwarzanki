@@ -1,16 +1,19 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { LocationOnMap, Shop } from "../App";
-import { usePost } from "./usePost";
-import { NewShop } from "../components/AddShop";
+import { Shop } from "../App";
+import { sendPostRequest } from "../utils/sendPostRequest";
+import { NewShop } from "../components/NewShopForm";
+import { LocationOnMap } from "../context/locationContextProvider";
 
-const post = usePost();
 const fetchSellersWithinRadius = ({ location, radius }: LocationOnMap) => {
-  return post("/shops/by_distance/", {
-    ...location,
-    radius,
+  return sendPostRequest({
+    url: "/shops/by_distance/",
+    data: {
+      ...location,
+      radius,
+    },
   });
 };
-export const useFetchShops = (locationOnMap: LocationOnMap) =>
+export const useShopsQuery = (locationOnMap: LocationOnMap) =>
   useQuery({
     queryKey: ["shops", locationOnMap],
     queryFn: (): Promise<Array<Shop>> =>
@@ -18,7 +21,8 @@ export const useFetchShops = (locationOnMap: LocationOnMap) =>
     staleTime: 1000 * 60 * 5,
   });
 
-const addShop = (shop: NewShop) => post("/shops", shop);
+const addShop = (shop: NewShop) =>
+  sendPostRequest({ url: "/shops", data: shop });
 
 export const useAddShopMutation = () => {
   const queryClient = useQueryClient();
