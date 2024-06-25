@@ -1,5 +1,7 @@
 ## Setup backendu
 
+Zalecana wersja pythona to 3.10+
+
 ### Aby uruchomić serwer wystarczy wykonać
 
 ```sh
