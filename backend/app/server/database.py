@@ -27,7 +27,7 @@ async def init_db():
     )
     database = client.get_database(DB_NAME)
 
-    # Create a 2dsphere index on the 'location' field of the 'Shop' collection
+    # Create a 2d-sphere index on the 'location' field of the 'Shop' collection
     shop_collection = database.get_collection("Shop")
     await shop_collection.create_index([("location", "2dsphere")])
 

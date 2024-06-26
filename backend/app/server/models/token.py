@@ -7,4 +7,7 @@ class Token(BaseModel):
 
 
 class TokenData(BaseModel):
-    username: str | None = None
+    user_id: str | None = None
+
+    def __init__(self, payload):
+        super().__init__(user_id=payload.get("sub"))

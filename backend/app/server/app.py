@@ -2,30 +2,29 @@ from contextlib import asynccontextmanager
 from datetime import timedelta
 from typing import Annotated
 
-from beanie import PydanticObjectId
 from fastapi import Depends, FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from server.database import init_db
 from server.models.auth import (
-    ACCESS_TOKEN_EXPIRE_MINUTES,
     authenticate_user,
     create_access_token,
     get_current_active_user,
     get_password_hash,
 )
-from server.models.password import Password
 from server.models.query import Query
+from server.models.security_config import SecurityConfig, load_security_details
 from server.models.shop import Shop, ShopWithDistance, ShopWithPosition
 from server.models.token import Token
-from server.models.user import User
+from server.models.user import User, UserData
 from server.models.utils import Point
 
 
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
     await init_db()
+    await load_security_details()
     yield
 
 
@@ -109,7 +108,7 @@ async def get_n_nearest_shops(query: Query.ShopsByNumber):
     ).to_list(n)
 
 
-@app.post("/users/register", tags=["User"], response_model=User)
+@app.post("/users/register", tags=["Auth"], response_model=UserData)
 async def register_user(query: Query.UserRegister):
     existing_user = await User.find_one(User.username == query.username)
     if existing_user:
@@ -118,34 +117,16 @@ async def register_user(query: Query.UserRegister):
             detail="Username already registered",
         )
 
-    user_data = {
-        "username": query.username,
-    }
+    hashed_password = get_password_hash(query.password)
+    user_data = {"username": query.username, "hashed_password": hashed_password}
+
     user = User(**user_data)
-    user_dict = await user.insert()
+    await user.insert()
 
-    await new_password(user_dict.id, query.password)
-
-    return user
+    return UserData(user)
 
 
-async def new_password(user_id: PydanticObjectId, password: str):
-    hashed_password = get_password_hash(password)
-    existing_password = await Password.find_one(Password.user_id == user_id)
-    if existing_password:
-        # If a password entry exists, update the hashed_password
-        await existing_password.update({"$set": {"hashed_password": hashed_password}})
-    else:
-        # If no entry exists, insert a new password
-        password_data = {
-            "user_id": user_id,
-            "hashed_password": hashed_password,
-        }
-        password = Password(**password_data)
-        await password.insert()
-
-
-@app.post("/token", tags=["User"])
+@app.post("/token", tags=["Auth"])
 async def login_for_access_token(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
 ) -> Token:
@@ -156,15 +137,14 @@ async def login_for_access_token(
             detail="Incorrect username or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    print(user)
-    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token_expires = timedelta(minutes=SecurityConfig.ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
-        data={"sub": user.username}, expires_delta=access_token_expires
+        data={"sub": str(user.id)}, expires_delta=access_token_expires
     )
     return Token(access_token=access_token, token_type="bearer")
 
 
-@app.get("/users/me/", tags=["Auth"], response_model=User)
+@app.get("/users/me/", tags=["Auth"], response_model=UserData)
 async def read_users_me(
     current_user: Annotated[User, Depends(get_current_active_user)],
 ):
