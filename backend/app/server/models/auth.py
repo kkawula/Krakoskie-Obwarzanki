@@ -37,12 +37,12 @@ async def get_hashed_password(user_id: PydanticObjectId):
 async def authenticate_user(username: str, password: str):
     user = await get_user(username)
     if not user:
-        return False
+        return None
 
     hashed_password = await get_hashed_password(user.id)
 
     if not hashed_password and not verify_password(password, hashed_password):
-        return False
+        return None
 
     return user
 
