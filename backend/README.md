@@ -1,6 +1,12 @@
-## Setup backendu
+## Setup backendu za pomocą Makefile (zalecana zainstalowana wersja pythona 3.10+)
 
-Zalecana wersja pythona to 3.10+
+Aby sprawdzić wersję pythona, wpisz w terminalu:
+
+```sh
+python3 --version
+```
+
+powinno zwrócić coś w stylu `Python 3.1x.x`
 
 ### Aby uruchomić serwer wystarczy wykonać
 
@@ -10,62 +16,46 @@ make server
 
 Komenda ta utworzy wirtualne środowisko, zainstaluje wymagane biblioteki (w tym pre-commit) i uruchomi serwer.
 
-To samo można zrobić krok po kroku manulanie:
+Niestety środowisko aktywowane jest tylko w ramach jednej sesji terminala, w tym przypadku wykonania make. Aby korzystać z np. `pre-commit run` trzeba aktywować środowisko ręcznie.
+
+```sh
+source venv/bin/activate
+```
+
+## Setup backendu ręcznie
+
+To samo można zrobić krok po kroku manualnie:
 
 ### Wirtualne środowisko
 
 Najpierw utwórz wirtualne środowisko.
 
 ```sh
-python -m venv venv
-```
-
-lub
-
-```sh
 python3 -m venv venv
 ```
 
-Potem aktywuj wirtualne środowisko
-
-Unix/MacOS:
+Aktywuj wirtualne środowisko
 
 ```sh
 source venv/bin/activate
 ```
 
-Windows:
-
-```sh
-venv\Scripts\activate
-```
-
 ### Instalacja bibliotek
 
-```sh
-make install
-```
-
-lub
+wymagane biblioteki
 
 ```sh
 pip install -r requirements.txt
 ```
 
-dla developera
-
-```sh
-make install-dev
-```
-
-lub
+biblioteki do developmentu
 
 ```sh
 pip install -r requirements-dev.txt
 pre-commit install
 ```
 
-### Uruchomienie serwera
+## Uruchomienie serwera
 
 ```
 make server
@@ -77,9 +67,9 @@ lub
 python3 app/main.py
 ```
 
-### Pre-commit
+## Pre-commit
 
-Pre-commit będzie działać przed każdym commitowaniem.
+Po zainstalowaniu komendą `pre-commit install` pre-commit będzie działał przed każdą próbą commita.
 
 Komenda `pre-commit run` sprawdza tylko zmienione pliki, które zostały dodane do staged (`git add .`) (automatycznie wywoływana przy każdym commicie), natomiast po dodaniu flagi `--all-files` sprawdza wszystkie pliki.
 
@@ -93,7 +83,7 @@ make pre-commit
 make pre-commit-all
 ```
 
-#### Jak to działa?
+### Jak to działa?
 
 Pre-commit sprawdza czy kod spełnia pewne wymagania przed commitowaniem. Jeśli nie spełnia, to commit nie zostanie wykonany, ale hooki zrobią odpowiedni refactor kodu (w wiekszości przypadków). Wprowadzone zmiany należy znowu dodać do staged i ponownie zrobić commit. Wymagania są zdefiniowane w pliku `.pre-commit-config.yaml`.
 
