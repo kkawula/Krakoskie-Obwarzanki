@@ -3,14 +3,11 @@ import os
 import certifi
 import motor.motor_asyncio
 from beanie import init_beanie
-from dotenv import load_dotenv
 from server.models.shop import Shop
 from server.models.user import User
 
 
 async def init_db():
-    load_dotenv()
-
     MONGO_URL = os.getenv("MONGO_URL")
 
     if not MONGO_URL:

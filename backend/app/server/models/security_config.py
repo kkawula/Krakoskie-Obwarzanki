@@ -1,7 +1,6 @@
 import os
 
 import jwt
-from dotenv import load_dotenv
 
 
 class SecurityConfig:
@@ -24,8 +23,6 @@ class SecurityConfig:
 
 
 async def load_security_details():
-    load_dotenv()
-
     secret_key = os.getenv("SECRET_KEY")
     if not secret_key:
         raise ValueError("You must set the SECRET_KEY environment variable")

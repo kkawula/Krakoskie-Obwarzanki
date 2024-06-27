@@ -1,20 +1,21 @@
 from contextlib import asynccontextmanager
-from datetime import timedelta
 from typing import Annotated
 
+from dotenv import load_dotenv
 from fastapi import Depends, FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi.security import OAuth2PasswordRequestForm
 from server.database import init_db
 from server.models.auth import (
     authenticate_user,
-    create_access_token,
-    get_current_active_user,
+    get_current_user,
+    get_new_token,
     get_password_hash,
+    get_user_by_username,
 )
 from server.models.query import Query
-from server.models.security_config import SecurityConfig, load_security_details
+from server.models.security_config import load_security_details
 from server.models.shop import Shop, ShopWithDistance, ShopWithPosition
 from server.models.token import Token
 from server.models.user import User, UserData
@@ -23,14 +24,13 @@ from server.models.utils import Point
 
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
+    load_dotenv()
     await init_db()
     await load_security_details()
     yield
 
 
 app = FastAPI(lifespan=lifespan)
-
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 
 origins = [
@@ -110,7 +110,7 @@ async def get_n_nearest_shops(query: Query.ShopsByNumber):
 
 @app.post("/user/register", tags=["User"], response_model=UserData)
 async def register_user(query: Query.UserRegister):
-    existing_user = await User.find_one(User.username == query.username)
+    existing_user = await get_user_by_username(query.username)
     if existing_user:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -118,34 +118,30 @@ async def register_user(query: Query.UserRegister):
         )
 
     hashed_password = get_password_hash(query.password)
-    user_data = {"username": query.username, "hashed_password": hashed_password}
 
-    user = User(**user_data)
+    user = User(username=query.username, hashed_password=hashed_password)
     await user.insert()
 
-    return UserData(user)
+    return UserData(**user.model_dump())
 
 
 @app.post("/user/login", tags=["User"])
 async def login_for_access_token(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
 ) -> Token:
-    user = await authenticate_user(form_data.username, form_data.password)
+    user, error_msg = await authenticate_user(form_data.username, form_data.password)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect username or password",
+            detail=error_msg,
             headers={"WWW-Authenticate": "Bearer"},
         )
-    access_token_expires = timedelta(minutes=SecurityConfig.ACCESS_TOKEN_EXPIRE_MINUTES)
-    access_token = create_access_token(
-        data={"sub": str(user.id)}, expires_delta=access_token_expires
-    )
-    return Token(access_token=access_token, token_type="bearer")
+
+    return get_new_token(user)
 
 
 @app.get("/user/me/", tags=["User"], response_model=UserData)
 async def read_users_me(
-    current_user: Annotated[User, Depends(get_current_active_user)],
+    current_user: Annotated[User, Depends(get_current_user)],
 ):
     return current_user
