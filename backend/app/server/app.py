@@ -108,7 +108,7 @@ async def get_n_nearest_shops(query: Query.ShopsByNumber):
     ).to_list(n)
 
 
-@app.post("/users/register", tags=["Auth"], response_model=UserData)
+@app.post("/user/register", tags=["User"], response_model=UserData)
 async def register_user(query: Query.UserRegister):
     existing_user = await User.find_one(User.username == query.username)
     if existing_user:
@@ -126,7 +126,7 @@ async def register_user(query: Query.UserRegister):
     return UserData(user)
 
 
-@app.post("/token", tags=["Auth"])
+@app.post("/user/login", tags=["User"])
 async def login_for_access_token(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
 ) -> Token:
@@ -144,7 +144,7 @@ async def login_for_access_token(
     return Token(access_token=access_token, token_type="bearer")
 
 
-@app.get("/users/me/", tags=["Auth"], response_model=UserData)
+@app.get("/user/me/", tags=["User"], response_model=UserData)
 async def read_users_me(
     current_user: Annotated[User, Depends(get_current_active_user)],
 ):
