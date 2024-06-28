@@ -16,8 +16,3 @@ class UserData(BaseModel):
     username: str
     email: str | None = None
     full_name: str | None = None
-
-    # def __init__(self, user: User):
-    #     super().__init__(
-    #         username=user.username, email=user.email, full_name=user.full_name
-    #     )

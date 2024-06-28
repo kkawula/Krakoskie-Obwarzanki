@@ -5,8 +5,8 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jwt.exceptions import InvalidTokenError
 from passlib.context import CryptContext
-from server.models.security_config import SecurityConfig
-from server.models.token import Token, TokenData
+from server.auth.security_config import SecurityConfig
+from server.auth.token import Token, TokenData
 from server.models.user import User, UserData
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")

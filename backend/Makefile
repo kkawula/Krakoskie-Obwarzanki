@@ -30,6 +30,10 @@ server: venv/bin/activate
 	. ./venv/bin/activate
 	$(PYTHON) app/main.py
 
+test: venv/bin/activate
+	. ./venv/bin/activate
+	$(PYTHON) -m pytest tests
+
 .PHONY: pre-commit
 # Run pre-commit on all files in staging area
 pre-commit: pre-commit-install
