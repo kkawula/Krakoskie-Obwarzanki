@@ -14,3 +14,9 @@ class Seller(Document):
     availability_hours: List[Tuple[time, time]]
     most_common_spots: List[Point]
     user: User
+
+    class Settings:
+        name = "sellers"
+        indexes = [
+            [("most_common_spots", "2dsphere")],  # GEO index
+        ]

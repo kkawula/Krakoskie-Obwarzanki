@@ -36,13 +36,13 @@ class Shop(Document, baseShop):
             "example": {
                 "location": {
                     "type": "Point",
-                    "coordinates": [50.086776271666096, 19.915122985839847],
+                    "coordinates": [19.915122985839847, 50.086776271666096],
                 },
                 "flavors": ["Sezam", "Mak"],
+                "price": 5.0,
                 "card_payment": True,
-                "is_open_today": True,
-                "start_time": "08:00",
-                "end_time": "16:00",
+                "opening_time": "08:00",
+                "closing_time": "16:00",
             }
         }
     )
