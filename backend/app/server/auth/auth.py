@@ -6,7 +6,7 @@ from fastapi.security import OAuth2PasswordBearer
 from jwt.exceptions import InvalidTokenError
 from passlib.context import CryptContext
 
-from ..models.user import User, UserData
+from ..dbmodels.user import PrivateUser, PublicUser
 from .security_config import SecurityConfig
 from .token import Token, TokenData
 
@@ -24,12 +24,12 @@ def get_password_hash(password):
 
 
 async def get_user_by_username(username: str):
-    return await User.find_one(User.username == username)
+    return await PrivateUser.find_one(PrivateUser.username == username)
 
 
 async def authenticate_user(
     username: str, password: str
-) -> tuple[Optional[User], Optional[str]]:
+) -> tuple[Optional[PrivateUser], Optional[str]]:
     user = await get_user_by_username(username)
     if not user:
         return None, "User not found."
@@ -53,14 +53,16 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
     return Token(access_token=encoded_jwt)
 
 
-def get_new_token(user: User):
+def get_new_token(user: PrivateUser):
     access_token_expires = timedelta(minutes=SecurityConfig.ACCESS_TOKEN_EXPIRE_MINUTES)
     return create_access_token(
         data={"sub": str(user.id)}, expires_delta=access_token_expires
     )
 
 
-async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]) -> User:
+async def get_current_user(
+    token: Annotated[str, Depends(oauth2_scheme)],
+) -> PrivateUser:
     try:
         payload = SecurityConfig.decode(token)
         token_data = TokenData(payload)
@@ -74,9 +76,9 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]) -> Use
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token."
         )
-    user = await User.get(token_data.user_id)
+    user = await PrivateUser.get(token_data.user_id)
     if user is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="User not found."
         )
-    return UserData(**user.model_dump())
+    return PublicUser(**user.model_dump())

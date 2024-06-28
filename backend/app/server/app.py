@@ -17,9 +17,9 @@ from .auth.auth import (
 from .auth.security_config import load_security_details
 from .auth.token import Token
 from .database import init_db
-from .models.shop import Shop, ShopWithDistance, ShopWithPosition
-from .models.user import User, UserData
-from .models.util_types import Point
+from .dbmodels.shop import Shop, ShopWithDistance, ShopWithPosition
+from .dbmodels.user import PrivateUser, PublicUser
+from .dbmodels.util_types import Point
 from .query.shop import ShopQuery
 from .query.user import UserQuery
 
@@ -110,7 +110,7 @@ async def get_n_nearest_shops(query: ShopQuery.ShopsByNumber):
     ).to_list(n)
 
 
-@app.post("/user/register", tags=["User"], response_model=UserData)
+@app.post("/user/register", tags=["User"], response_model=PublicUser)
 async def register_user(query: UserQuery.UserRegister):
     existing_user = await get_user_by_username(query.username)
     if existing_user:
@@ -121,10 +121,10 @@ async def register_user(query: UserQuery.UserRegister):
 
     hashed_password = get_password_hash(query.password)
 
-    user = User(username=query.username, hashed_password=hashed_password)
+    user = PrivateUser(username=query.username, hashed_password=hashed_password)
     await user.insert()
 
-    return UserData(**user.model_dump())
+    return PublicUser(**user.model_dump())
 
 
 @app.post("/user/login", tags=["User"])
@@ -142,8 +142,8 @@ async def login_for_access_token(
     return get_new_token(user)
 
 
-@app.get("/user/me/", tags=["User"], response_model=UserData)
+@app.get("/user/me/", tags=["User"], response_model=PublicUser)
 async def read_users_me(
-    current_user: Annotated[User, Depends(get_current_user)],
+    current_user: Annotated[PrivateUser, Depends(get_current_user)],
 ):
     return current_user

@@ -2,7 +2,7 @@ from beanie import Document
 from pydantic import BaseModel
 
 
-class User(Document):
+class PrivateUser(Document):
     username: str
     hashed_password: str
     email: str | None = None
@@ -12,7 +12,7 @@ class User(Document):
         name = "users"
 
 
-class UserData(BaseModel):
+class PublicUser(BaseModel):
     username: str
     email: str | None = None
     full_name: str | None = None
