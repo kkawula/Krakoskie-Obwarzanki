@@ -3,6 +3,7 @@ import os
 import certifi
 import motor.motor_asyncio
 from beanie import init_beanie
+
 from server.models.shop import Shop
 from server.models.user import User
 
