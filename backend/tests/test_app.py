@@ -20,8 +20,8 @@ def test_read_shop_by_id():
     with client:
         all_shops = client.get("/shops")
         sample_shop = all_shops.json()[0]
-        print(sample_shop)
-        found_shop_resp = client.get(f"/shops/{sample_shop["_id"]}")
+        sample_shop_id = sample_shop["_id"]
+        found_shop_resp = client.get(f"/shops/{sample_shop_id}")
         assert found_shop_resp.status_code == 200
         assert found_shop_resp.json() == sample_shop
 
