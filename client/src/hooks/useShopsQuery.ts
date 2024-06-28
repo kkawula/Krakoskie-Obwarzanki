@@ -19,7 +19,6 @@ export const useShopsQuery = (locationOnMap: LocationOnMap) =>
     queryFn: (): Promise<Array<Shop>> =>
       fetchSellersWithinRadius(locationOnMap),
     staleTime: 1000 * 60 * 5,
-    retry: 1,
   });
 
 const addShop = (shop: NewShop) =>

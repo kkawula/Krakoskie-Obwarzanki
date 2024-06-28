@@ -67,11 +67,11 @@ function NewShopForm({
     }))
   );
   const [date, setDate] = useState(new Date());
-  const [openTime, setStartTime] = useState<Time>({
+  const [openingTime, setOpeningTime] = useState<Time>({
     hour: 8,
     minute: 0,
   });
-  const [closeTime, setEndTime] = useState<Time>({
+  const [closingTime, setClosingTime] = useState<Time>({
     hour: 16,
     minute: 0,
   });
@@ -86,13 +86,13 @@ function NewShopForm({
       flavors: flavourChecked.filter((f) => f.isChecked).map((f) => f.name),
       card_payment: isCardChecked,
       is_open_today: true,
-      opening_time: prettyTime(openTime),
-      closing_time: prettyTime(closeTime),
-      price: 3.0,
+      opening_time: prettyTime(openingTime),
+      closing_time: prettyTime(closingTime),
+      price: 3.0, // hardcoded price
     };
     const { error } = await addShop(newShop);
     if (error) {
-      console.error(error.message);
+      console.error(error);
     }
     onClose();
   };
@@ -127,11 +127,11 @@ function NewShopForm({
                 <NumberInput
                   size="sm"
                   maxW={16}
-                  value={openTime.hour}
+                  value={openingTime.hour}
                   min={0}
                   max={23}
                   onChange={(value) =>
-                    setStartTime({ ...openTime, hour: parseInt(value) })
+                    setOpeningTime({ ...openingTime, hour: parseInt(value) })
                   }
                 >
                   <NumberInputField />
@@ -143,12 +143,12 @@ function NewShopForm({
                 <NumberInput
                   size="sm"
                   maxW={16}
-                  value={openTime.minute}
+                  value={openingTime.minute}
                   min={0}
                   max={59}
                   step={5}
                   onChange={(value) =>
-                    setStartTime({ ...openTime, minute: parseInt(value) })
+                    setOpeningTime({ ...openingTime, minute: parseInt(value) })
                   }
                 >
                   <NumberInputField />
@@ -163,11 +163,11 @@ function NewShopForm({
                 <NumberInput
                   size="sm"
                   maxW={16}
-                  value={closeTime.hour}
+                  value={closingTime.hour}
                   min={0}
                   max={23}
                   onChange={(value) =>
-                    setEndTime({ ...closeTime, hour: parseInt(value) })
+                    setClosingTime({ ...closingTime, hour: parseInt(value) })
                   }
                 >
                   <NumberInputField />
@@ -179,12 +179,12 @@ function NewShopForm({
                 <NumberInput
                   size="sm"
                   maxW={16}
-                  value={closeTime.minute}
+                  value={closingTime.minute}
                   min={0}
                   max={59}
                   step={5}
                   onChange={(value) =>
-                    setEndTime({ ...closeTime, minute: parseInt(value) })
+                    setClosingTime({ ...closingTime, minute: parseInt(value) })
                   }
                 >
                   <NumberInputField />
