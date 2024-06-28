@@ -1,9 +1,9 @@
 from typing import List
-from pydantic import root_validator
+
 from beanie import Document
+from pydantic import ConfigDict, model_validator
 
-from server.models.utils import Point
-
+from .util_types import Point
 
 
 class Shop(Document):
@@ -16,11 +16,12 @@ class Shop(Document):
     start_time: str
     end_time: str
 
-    @root_validator(pre=True)
-    def set_location(cls, values):
-        if not values.get('location'):
-            values['location'] = Point(**values)
-        return values
+    def __init__(self, *a, **kw):
+        if not kw.get("location"):
+            # It the same as setting kw["location"] to
+            #              = Point(type="Point", coordinates=[kw["lng"], kw["lat"]])
+            kw["location"] = Point(**kw)
+        super().__init__(*a, **kw)
 
     class Settings:
         name = "shops"
@@ -28,9 +29,8 @@ class Shop(Document):
             [("location", "2dsphere")],  # GEO index
         ]
 
-
-    class Config:
-        schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "name": "Pretzel Shop",
                 "location": {
@@ -44,16 +44,40 @@ class Shop(Document):
                 "end_time": "16:00",
             }
         }
+    )
 
 
 class ShopWithPosition(Shop):
     lat: float
     lng: float
 
-    @root_validator(pre=True)
-    def set_location(cls, values):
+    def __init__(self, *a, **kw):
+        super().__init__(*a, **kw)
+        location = kw.get("location")
+        if location:
+            self.lat = location["coordinates"][1]
+            self.lng = location["coordinates"][0]
+
+    model_config = ConfigDict(
+        json_schema_extra={
+            "example": {
+                "name": "Pretzel Shop",
+                "flavors": ["Sezam", "Mak"],
+                "card_payment": True,
+                "is_open_today": True,
+                "start_time": "08:00",
+                "end_time": "16:00",
+                "lat": 50.086776271666096,
+                "lng": 19.915122985839847,
+            }
+        }
+    )
+
+    @model_validator(mode="before")
+    def set_location(cls, values: Shop | dict):
         """
-        Sets the latitude and longitude values based on the location coordinates, when the model is created.
+        Sets the latitude and longitude values based on the location coordinates,
+          when the model is created.
 
         Args:
             values (dict): The input values for the model.
@@ -61,10 +85,12 @@ class ShopWithPosition(Shop):
         Returns:
             dict: The updated values with latitude and longitude set.
         """
-        location = values.get('location')
-        if location:
-            values['lng'] = location['coordinates'][0]
-            values['lat'] = location['coordinates'][1]
+        if type(values) == Shop:
+            values = values.model_dump()
+
+        if "lat" not in values and "lng" not in values:
+            values["lat"] = values["location"]["coordinates"][1]
+            values["lng"] = values["location"]["coordinates"][0]
         return values
 
 

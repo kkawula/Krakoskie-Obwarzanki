@@ -1,14 +1,14 @@
 import os
 
+import certifi
 import motor.motor_asyncio
 from beanie import init_beanie
-from dotenv import load_dotenv
-from server.models.shop import Shop
+
+from .models.shop import Shop
+from .models.user import User
 
 
 async def init_db():
-    load_dotenv()
-
     MONGO_URL = os.getenv("MONGO_URL")
 
     if not MONGO_URL:
@@ -19,11 +19,13 @@ async def init_db():
     if not DB_NAME:
         raise ValueError("You must set the DB_NAME environment variable")
 
-    client = motor.motor_asyncio.AsyncIOMotorClient(MONGO_URL)
+    client = motor.motor_asyncio.AsyncIOMotorClient(
+        MONGO_URL, tlsCAFile=certifi.where()
+    )
     database = client.get_database(DB_NAME)
 
-    # Create a 2dsphere index on the 'location' field of the 'Shop' collection
-    shop_collection = database.get_collection("Shop")
+    # Create a 2d-sphere index on the 'location' field of the 'Shop' collection
+    shop_collection = database.get_collection(Shop.Settings.name)
     await shop_collection.create_index([("location", "2dsphere")])
 
-    await init_beanie(database=database, document_models=[Shop])
+    await init_beanie(database=database, document_models=[Shop, User])

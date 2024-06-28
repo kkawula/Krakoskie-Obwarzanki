@@ -1,0 +1,34 @@
+name: Lint, Refactor and Commit backend code
+on: pull_request
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+
+      - uses: actions/setup-python@v2
+      - uses: chartboost/ruff-action@v1
+        with:
+          args: "check . --fix"
+          # fix_args: --fix .
+          config: .ruff.toml
+          src: backend
+      - uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "style fixes by ruff"
+          commit_options: "--no-verify"
+      - uses: chartboost/ruff-action@v1
+        with:
+          args: "format"
+          src: backend
+      - uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "refactors by ruff"
+          commit_options: "--no-verify"

@@ -1,80 +1,91 @@
-## Setup backendu
+## Setup backendu za pomocą Makefile (zalecana zainstalowana wersja pythona 3.10+)
 
-### Wirtualne środowisko
-
-```sh
-python -m venv venv
-```
-
-lub
+Aby sprawdzić wersję pythona, wpisz w terminalu:
 
 ```sh
-python3 -m venv venv
+python3 --version
 ```
 
-Potem aktywuj wirtualne środowisko
+powinno zwrócić coś w stylu `Python 3.1x.x`
 
-Unix/MacOS:
+### Aby uruchomić serwer wystarczy wykonać
+
+```sh
+make server
+```
+
+Komenda ta utworzy wirtualne środowisko, zainstaluje wymagane biblioteki (w tym pre-commit) i uruchomi serwer.
+
+Niestety środowisko aktywowane jest tylko w ramach jednej sesji terminala, w tym przypadku wykonania make. Aby korzystać z np. `pre-commit run` trzeba aktywować środowisko ręcznie.
 
 ```sh
 source venv/bin/activate
 ```
 
-Windows:
+## Setup backendu ręcznie
+
+To samo można zrobić krok po kroku manualnie:
+
+### Wirtualne środowisko
+
+Najpierw utwórz wirtualne środowisko.
 
 ```sh
-venv\Scripts\activate
+python3 -m venv venv
+```
+
+Aktywuj wirtualne środowisko
+
+```sh
+source venv/bin/activate
 ```
 
 ### Instalacja bibliotek
+
+wymagane biblioteki
 
 ```sh
 pip install -r requirements.txt
 ```
 
-lub
+biblioteki do developmentu
 
 ```sh
-make install
+pip install -r requirements-dev.txt
+pre-commit install
 ```
 
-### Uruchomienie serwera
-
-```
-uvicorn main:app --reload
-```
-
-lub
+## Uruchomienie serwera
 
 ```
 make server
 ```
 
-### Pre-commit
-
-Aby pre-commit działał poprawnie, musisz zainstalować pre-commit.
-
-```sh
-pip install -r requirements-dev.txt
-```
-
 lub
 
-```sh
-make install-dev
+```
+python3 app/main.py
 ```
 
-Następnie zainstaluj pre-commit (należy to zrobić tylko raz)
+## Pre-commit
+
+Po zainstalowaniu komendą `pre-commit install` pre-commit będzie działał przed każdą próbą commita.
+
+Komenda `pre-commit run` sprawdza tylko zmienione pliki, które zostały dodane do staged (`git add .`) (automatycznie wywoływana przy każdym commicie), natomiast po dodaniu flagi `--all-files` sprawdza wszystkie pliki.
+
+Do tych komend utworzone są skróty w Makefile:
 
 ```sh
-pre-commit install
+make pre-commit
 ```
 
-Teraz pre-commit będzie działać przed każdym commitowaniem.
+```sh
+make pre-commit-all
+```
 
-#### Jak to działa?
+### Jak to działa?
 
-Pre-commit sprawdza czy kod spełnia pewne wymagania przed commitowaniem. Jeśli nie spełnia, to commit nie zostanie zrobiony, ale hooki zrobią odpowiedni refactor kodu. Wprowadzone zmiany należy znowu dodać do stash i ponownie zrobić commit. Wymagania są zdefiniowane w pliku `.pre-commit-config.yaml`.
+Pre-commit sprawdza czy kod spełnia pewne wymagania przed commitowaniem. Jeśli nie spełnia, to commit nie zostanie wykonany, ale hooki zrobią odpowiedni refactor kodu (w wiekszości przypadków). Wprowadzone zmiany należy znowu dodać do staged i ponownie zrobić commit. Wymagania są zdefiniowane w pliku `.pre-commit-config.yaml`.
 
 Jeśli z jakiegoś powodu chcesz zrobić commit bez sprawdzania, to możesz użyć flagi `--no-verify`.
 

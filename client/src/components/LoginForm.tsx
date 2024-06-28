@@ -6,17 +6,26 @@ import {
   Input,
   Text,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { useRef } from "react";
 import { Link } from "react-router-dom";
 
+// TODO: Add Formik library
 export default function LoginForm() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const emailRef = useRef<HTMLInputElement | null>(null);
+  const passwordRef = useRef<HTMLInputElement | null>(null);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // const emailValue = emailRef.current?.value;
+    // const passwordValue = passwordRef.current?.value;
+
+    // TODO: Implement form submission logic
+  };
 
   return (
     <Box
       as="form"
-      // onSubmit={handleSubmit}
+      onSubmit={handleSubmit}
       p="4"
       borderWidth="2px"
       borderRadius="md"
@@ -24,19 +33,11 @@ export default function LoginForm() {
     >
       <FormControl id="email" isRequired>
         <FormLabel>Email</FormLabel>
-        <Input
-          type="text"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
+        <Input type="text" ref={emailRef} />
       </FormControl>
       <FormControl id="password" isRequired mt="4">
         <FormLabel>Hasło</FormLabel>
-        <Input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
+        <Input type="password" ref={passwordRef} />
       </FormControl>
       <Button type="submit" colorScheme="blue" mt="4">
         Zaloguj się

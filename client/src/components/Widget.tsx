@@ -10,8 +10,6 @@ import RegisterForm from "./RegisterForm";
 export default function Widget() {
   const [show, setShow] = useState(false);
 
-  const handleToggle = () => setShow(!show);
-
   return (
     <Box
       position="absolute"
@@ -27,8 +25,12 @@ export default function Widget() {
       borderRadius="md"
       boxShadow="sm"
     >
-      <Header handleToggle={handleToggle} show={show} />
-
+      <Header
+        handleToggle={() => {
+          setShow((prevShow) => !prevShow);
+        }}
+        show={show}
+      />
       <Collapse in={show}>
         <Box w="350px">
           <Router>
