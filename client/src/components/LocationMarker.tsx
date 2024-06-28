@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Marker, Popup, useMapEvents } from "react-leaflet";
-import AddShop from "./AddShop";
-import L, { type LatLngLiteral } from "leaflet";
+import NewShopForm from "./NewShopForm";
+import L, { LatLngLiteral } from "leaflet";
 import icon from "../assets/icon_ob.png";
 
 export const customIcon = new L.Icon({
@@ -9,15 +9,16 @@ export const customIcon = new L.Icon({
   iconSize: [36, 36],
 });
 
+let position: LatLngLiteral | null = null;
+
 function LocationMarker() {
-  const [position, setPosition] = useState<LatLngLiteral | null>(null);
-  const [setupOpen, setSetupOpen] = useState(false);
+  const [isAddingNewShopOpen, setIsAddingNewShopOpen] = useState(false);
 
   const map = useMapEvents({
     click(e) {
-      setPosition(e.latlng);
+      position = e.latlng;
       map.flyTo(e.latlng, map.getZoom());
-      setSetupOpen(true);
+      setIsAddingNewShopOpen(true);
     },
   });
 
@@ -27,11 +28,12 @@ function LocationMarker() {
         <Marker key={position.lat} position={position} icon={customIcon}>
           <Popup>You are here</Popup>
         </Marker>
-        <AddShop
+        <NewShopForm
           position={position}
-          isOpen={setupOpen}
+          isOpen={isAddingNewShopOpen}
           onClose={() => {
-            setSetupOpen(false);
+            setIsAddingNewShopOpen(false);
+            position = null;
           }}
         />
       </>

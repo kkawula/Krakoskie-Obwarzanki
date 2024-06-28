@@ -17,24 +17,25 @@ import {
   FormControl,
   Button,
 } from "@chakra-ui/react";
-import { useContext, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { SingleDatepicker } from "chakra-dayzed-datepicker";
-import { usePost } from "../hooks/usePost";
-import { MarkerSetter } from "./Map";
-import { LatLngLiteral } from "leaflet";
-import { ITime, prettyTime } from "../utils/time";
+import { type LatLngLiteral } from "leaflet";
+import { Time, prettyTime } from "../utils/time";
+import { useAddShopMutation } from "../hooks/useShopsQuery";
 
+export type NewShop = {
+  lat: number;
+  lng: number;
+  name: string;
+  flavors: string[];
+  card_payment: boolean;
+  is_open_today: boolean;
+  start_time: string;
+  end_time: string;
+};
 type Flavour = {
   name: string;
   isChecked: boolean;
-};
-
-type AddShopProps = {
-  position: LatLngLiteral;
-  isOpen: boolean;
-  onClose: () => void;
-  // onAddShop: () => void;
-  // shopData: { name: string; location: string; description: string; image: string };
 };
 
 const flavours = ["Ser", "Mak", "Mieszany", "Sezam", "Sól"];
@@ -47,8 +48,17 @@ const users = [
   "Pani Basia",
 ];
 
-function AddShop({ position, isOpen, onClose }: AddShopProps) {
-  const setNewMarker = useContext(MarkerSetter);
+function NewShopForm({
+  position,
+  isOpen,
+  onClose,
+}: {
+  position: LatLngLiteral;
+  isOpen: boolean;
+  onClose: () => void;
+}) {
+  const { mutateAsync: addShop } = useAddShopMutation();
+
   const [flavourChecked, setFlavourChecked] = useState<Flavour[]>(
     flavours.map((f) => ({
       name: f,
@@ -56,11 +66,11 @@ function AddShop({ position, isOpen, onClose }: AddShopProps) {
     }))
   );
   const [date, setDate] = useState(new Date());
-  const [startTime, setStartTime] = useState<ITime>({
+  const [startTime, setStartTime] = useState<Time>({
     hour: 8,
     minute: 0,
   });
-  const [endTime, setEndTime] = useState<ITime>({
+  const [endTime, setEndTime] = useState<Time>({
     hour: 16,
     minute: 0,
   });
@@ -68,10 +78,8 @@ function AddShop({ position, isOpen, onClose }: AddShopProps) {
 
   const cancelRef = useRef(null);
 
-  const post = usePost();
-
-  const handleSubmit = () => {
-    const body = {
+  const handleSubmit = async () => {
+    const newShop = {
       ...position,
       name: users[Math.floor(Math.random() * users.length)],
       flavors: flavourChecked.filter((f) => f.isChecked).map((f) => f.name),
@@ -80,12 +88,10 @@ function AddShop({ position, isOpen, onClose }: AddShopProps) {
       start_time: prettyTime(startTime),
       end_time: prettyTime(endTime),
     };
-    post("/shops", body).catch(console.log);
-    setNewMarker({
-      ...body,
-      id: "1",
-      name: "temp",
-    });
+    const { error } = await addShop(newShop);
+    if (error) {
+      console.error(error);
+    }
     onClose();
   };
 
@@ -224,4 +230,4 @@ function AddShop({ position, isOpen, onClose }: AddShopProps) {
   );
 }
 
-export default AddShop;
+export default NewShopForm;
