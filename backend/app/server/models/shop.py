@@ -1,7 +1,7 @@
 from typing import List
 
 from beanie import Document
-from pydantic import model_validator
+from pydantic import ConfigDict, model_validator
 from server.models.util_types import Point
 
 
@@ -28,8 +28,8 @@ class Shop(Document):
             [("location", "2dsphere")],  # GEO index
         ]
 
-    class Config:
-        json_schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "name": "Pretzel Shop",
                 "location": {
@@ -43,6 +43,7 @@ class Shop(Document):
                 "end_time": "16:00",
             }
         }
+    )
 
 
 class ShopWithPosition(Shop):
@@ -56,8 +57,8 @@ class ShopWithPosition(Shop):
             self.lat = location["coordinates"][1]
             self.lng = location["coordinates"][0]
 
-    class Config:
-        json_schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "name": "Pretzel Shop",
                 "flavors": ["Sezam", "Mak"],
@@ -69,6 +70,7 @@ class ShopWithPosition(Shop):
                 "lng": 19.915122985839847,
             }
         }
+    )
 
     @model_validator(mode="before")
     def set_location(cls, values: Shop | dict):

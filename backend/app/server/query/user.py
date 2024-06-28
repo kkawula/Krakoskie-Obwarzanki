@@ -1,12 +1,10 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class UserQuery:
     class UserRegister(BaseModel):
         username: str
         password: str
-
-        class Config:
-            json_schema_extra = {
-                "example": {"username": "user", "password": "password"}
-            }
+        model_config = ConfigDict(
+            json_schema_extra={"example": {"username": "user", "password": "password"}}
+        )
