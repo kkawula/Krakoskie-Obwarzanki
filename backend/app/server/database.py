@@ -24,7 +24,7 @@ async def init_db():
     database = client.get_database(DB_NAME)
 
     # Create a 2d-sphere index on the 'location' field of the 'Shop' collection
-    shop_collection = database.get_collection("Shop")
+    shop_collection = database.get_collection(Shop.Settings.name)
     await shop_collection.create_index([("location", "2dsphere")])
 
     await init_beanie(database=database, document_models=[Shop, User])
