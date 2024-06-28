@@ -4,8 +4,8 @@ import certifi
 import motor.motor_asyncio
 from beanie import init_beanie
 
-from .models.shop import Shop
-from .models.user import PrivateUser
+from .dbmodels.shop import Shop
+from .dbmodels.user import PrivateUser
 
 
 async def init_db():

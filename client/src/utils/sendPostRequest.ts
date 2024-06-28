@@ -14,7 +14,7 @@ export const sendPostRequest = async ({
   };
   const resp = await fetch(baseUrl + url, requestOptions);
   if (!resp.ok) {
-    throw new Error(`HTTP error! status: ${resp.status}`);
+    throw new Error(`HTTP error! status: ${resp.status}}`);
   }
   return await resp.json();
 };

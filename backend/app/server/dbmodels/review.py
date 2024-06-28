@@ -1,11 +1,15 @@
-from beanie import Document
+from typing import Optional
 
-from .seller import Seller
+from beanie import Document, PydanticObjectId
+
 from .user import PrivateUser as User
 
 
 class Review(Document):
     rating: int
-    review: str
-    reviewer: User
-    seller: Seller
+    review: Optional[str]
+    reviewer: Optional[User]
+    seller_id: PydanticObjectId
+
+    class Settings:
+        name = "reviews"

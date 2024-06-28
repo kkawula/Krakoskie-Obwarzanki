@@ -1,17 +1,16 @@
-from datetime import time
 from typing import List
 
-from beanie import Document
+from beanie import Document, Insert, before_event
 from pydantic import BaseModel, ConfigDict
 
 from .seller import Seller
-from .user import User
+from .user import PrivateUser as User
 from .util_types import Point
 
 
 class baseShop(BaseModel):
     location: Point
-    flavours: List[str]
+    flavors: List[str]
     price: float
     card_payment: bool
 
@@ -22,9 +21,9 @@ class baseShop(BaseModel):
 
 
 class Shop(Document, baseShop):
-    owner: Seller
-    open_time: time
-    close_time: time
+    owner: Seller | None = None
+    opening_time: str
+    closing_time: str
 
     class Settings:
         name = "shops"
@@ -47,6 +46,13 @@ class Shop(Document, baseShop):
             }
         }
     )
+
+    @before_event(Insert)
+    def capitalize_name(self):
+        raise Exception("testowe")
+        print("HHHHHHHHHHHHHHHHH")
+        self.opening_time = self.opening_time.strftime("%H:%M")
+        self.closing_time = self.closing_time.strftime("%H:%M")
 
 
 class ShopByCommunity(Document, baseShop):

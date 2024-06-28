@@ -1,6 +1,6 @@
 from pydantic import ConfigDict, model_validator
 
-from ..dbmodels.newModels import Shop
+from ..dbmodels.shop import Shop
 
 
 class ShopWithPosition(Shop):

@@ -16,3 +16,17 @@ class Point(BaseModel):
         if lng and lat:
             values["coordinates"] = [lng, lat]
         return values
+
+
+# class TimeStringField(Field):
+#     """
+#     A custom field for handling datetime.time objects as strings in MongoDB.
+#     """
+
+#     def encode(self, value: bytes) -> bytes:
+#         # Convert time object to a string
+#         return value.strftime("%H:%M:%S")
+
+#     def decode(self, value: bytes) -> time:
+#         # Convert string back to a time object
+#         return datetime.strptime(value, "%H:%M:%S").time()

@@ -10,6 +10,7 @@ from .util_types import Point
 
 class Seller(Document):
     reviews: List[Review]
+    availability_days: List[str]  # List of days of the week
     availability_hours: List[Tuple[time, time]]
     most_common_spots: List[Point]
     user: User
