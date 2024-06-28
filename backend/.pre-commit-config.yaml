@@ -12,6 +12,6 @@ repos:
       - id: husky-run-pre-commit
         name: client-pre-commit
         language: system
-        entry: bash -c "cd client && yarn lint-staged"
+        entry: bash -c "if [ -d client/node_modules ]; then cd client && yarn lint-staged; fi"
         pass_filenames: false
         always_run: true

@@ -6,20 +6,22 @@ from fastapi import Depends, FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse
 from fastapi.security import OAuth2PasswordRequestForm
-from server.database import init_db
-from server.models.auth import (
+
+from .auth.auth import (
     authenticate_user,
     get_current_user,
     get_new_token,
     get_password_hash,
     get_user_by_username,
 )
-from server.models.query import Query
-from server.models.security_config import load_security_details
-from server.models.shop import Shop, ShopWithDistance, ShopWithPosition
-from server.models.token import Token
-from server.models.user import User, UserData
-from server.models.utils import Point
+from .auth.security_config import load_security_details
+from .auth.token import Token
+from .database import init_db
+from .models.shop import Shop, ShopWithDistance, ShopWithPosition
+from .models.user import User, UserData
+from .models.util_types import Point
+from .query.shop import ShopQuery
+from .query.user import UserQuery
 
 
 @asynccontextmanager
@@ -72,7 +74,7 @@ async def get_shop(shop_id: str):
 
 
 @app.post("/shops/by_distance", tags=["Shops"], response_model=list[ShopWithDistance])
-async def get_shops_by_dist(query: Query.ShopsByDistance):
+async def get_shops_by_dist(query: ShopQuery.ShopsByDistance):
     radius = query.radius
     point = Point(**query.model_dump())
 
@@ -91,7 +93,7 @@ async def get_shops_by_dist(query: Query.ShopsByDistance):
 
 
 @app.post("/shops/by_number", tags=["Shops"], response_model=list[ShopWithDistance])
-async def get_n_nearest_shops(query: Query.ShopsByNumber):
+async def get_n_nearest_shops(query: ShopQuery.ShopsByNumber):
     n = query.n_closest
     point = Point(**query.model_dump())
 
@@ -109,7 +111,7 @@ async def get_n_nearest_shops(query: Query.ShopsByNumber):
 
 
 @app.post("/user/register", tags=["User"], response_model=UserData)
-async def register_user(query: Query.UserRegister):
+async def register_user(query: UserQuery.UserRegister):
     existing_user = await get_user_by_username(query.username)
     if existing_user:
         raise HTTPException(
