@@ -1,17 +1,32 @@
 from contextlib import asynccontextmanager
+from typing import Annotated
 
-from fastapi import FastAPI
+from dotenv import load_dotenv
+from fastapi import Depends, FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse
+from fastapi.security import OAuth2PasswordRequestForm
 from server.database import init_db
+from server.models.auth import (
+    authenticate_user,
+    get_current_user,
+    get_new_token,
+    get_password_hash,
+    get_user_by_username,
+)
 from server.models.query import Query
+from server.models.security_config import load_security_details
 from server.models.shop import Shop, ShopWithDistance, ShopWithPosition
+from server.models.token import Token
+from server.models.user import User, UserData
 from server.models.utils import Point
 
 
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
+    load_dotenv()
     await init_db()
+    await load_security_details()
     yield
 
 
@@ -91,3 +106,42 @@ async def get_n_nearest_shops(query: Query.ShopsByNumber):
         ],
         projection_model=ShopWithDistance,
     ).to_list(n)
+
+
+@app.post("/user/register", tags=["User"], response_model=UserData)
+async def register_user(query: Query.UserRegister):
+    existing_user = await get_user_by_username(query.username)
+    if existing_user:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Username already registered",
+        )
+
+    hashed_password = get_password_hash(query.password)
+
+    user = User(username=query.username, hashed_password=hashed_password)
+    await user.insert()
+
+    return UserData(**user.model_dump())
+
+
+@app.post("/user/login", tags=["User"])
+async def login_for_access_token(
+    form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
+) -> Token:
+    user, error_msg = await authenticate_user(form_data.username, form_data.password)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail=error_msg,
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    return get_new_token(user)
+
+
+@app.get("/user/me/", tags=["User"], response_model=UserData)
+async def read_users_me(
+    current_user: Annotated[User, Depends(get_current_user)],
+):
+    return current_user
