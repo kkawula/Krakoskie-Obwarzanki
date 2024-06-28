@@ -7,21 +7,21 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse
 from fastapi.security import OAuth2PasswordRequestForm
 
-from server.auth.auth import (
+from .auth.auth import (
     authenticate_user,
     get_current_user,
     get_new_token,
     get_password_hash,
     get_user_by_username,
 )
-from server.auth.security_config import load_security_details
-from server.auth.token import Token
-from server.database import init_db
-from server.models.shop import Shop, ShopWithDistance, ShopWithPosition
-from server.models.user import User, UserData
-from server.models.util_types import Point
-from server.query.shop import ShopQuery
-from server.query.user import UserQuery
+from .auth.security_config import load_security_details
+from .auth.token import Token
+from .database import init_db
+from .models.shop import Shop, ShopWithDistance, ShopWithPosition
+from .models.user import User, UserData
+from .models.util_types import Point
+from .query.shop import ShopQuery
+from .query.user import UserQuery
 
 
 @asynccontextmanager

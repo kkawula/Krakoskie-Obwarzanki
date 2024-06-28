@@ -2,7 +2,8 @@ from typing import List
 
 from beanie import Document
 from pydantic import ConfigDict, model_validator
-from server.models.util_types import Point
+
+from .util_types import Point
 
 
 class Shop(Document):
