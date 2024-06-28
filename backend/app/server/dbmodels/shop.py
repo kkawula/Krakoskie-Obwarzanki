@@ -1,10 +1,10 @@
 from typing import List
 
-from beanie import Document, Insert, before_event
+from beanie import Document
 from pydantic import BaseModel, ConfigDict
 
 from .seller import Seller
-from .user import PrivateUser as User
+from .user import User
 from .util_types import Point
 
 
@@ -46,13 +46,6 @@ class Shop(Document, baseShop):
             }
         }
     )
-
-    @before_event(Insert)
-    def capitalize_name(self):
-        raise Exception("testowe")
-        print("HHHHHHHHHHHHHHHHH")
-        self.opening_time = self.opening_time.strftime("%H:%M")
-        self.closing_time = self.closing_time.strftime("%H:%M")
 
 
 class ShopByCommunity(Document, baseShop):

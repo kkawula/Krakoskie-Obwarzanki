@@ -5,7 +5,7 @@ import motor.motor_asyncio
 from beanie import init_beanie
 
 from .dbmodels.shop import Shop
-from .dbmodels.user import PrivateUser
+from .dbmodels.user import User
 
 
 async def init_db():
@@ -28,4 +28,4 @@ async def init_db():
     shop_collection = database.get_collection(Shop.Settings.name)
     await shop_collection.create_index([("location", "2dsphere")])
 
-    await init_beanie(database=database, document_models=[Shop, PrivateUser])
+    await init_beanie(database=database, document_models=[Shop, User])

@@ -4,7 +4,7 @@ from typing import List, Tuple
 from beanie import Document
 
 from .review import Review
-from .user import PrivateUser as User
+from .user import User
 from .util_types import Point
 
 

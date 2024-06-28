@@ -2,7 +2,7 @@ from typing import Optional
 
 from beanie import Document, PydanticObjectId
 
-from .user import PrivateUser as User
+from .user import User
 
 
 class Review(Document):

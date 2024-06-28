@@ -20,7 +20,7 @@ from .auth.security_config import load_security_details
 from .auth.token import Token
 from .database import init_db
 from .dbmodels.shop import Shop
-from .dbmodels.user import PrivateUser, PublicUser
+from .dbmodels.user import PublicUser, User
 from .dbmodels.util_types import Point
 from .outputmodels.shop import ShopWithDistance, ShopWithPosition
 from .query.shop import ShopQuery
@@ -134,7 +134,7 @@ async def register_user(query: UserQuery.UserRegister):
 
     hashed_password = get_password_hash(query.password)
 
-    user = PrivateUser(username=query.username, hashed_password=hashed_password)
+    user = User(username=query.username, hashed_password=hashed_password)
     await user.insert()
 
     return PublicUser(**user.model_dump())
@@ -157,6 +157,6 @@ async def login_for_access_token(
 
 @app.get("/user/me/", tags=["User"], response_model=PublicUser)
 async def read_users_me(
-    current_user: Annotated[PrivateUser, Depends(get_current_user)],
+    current_user: Annotated[User, Depends(get_current_user)],
 ):
     return current_user
