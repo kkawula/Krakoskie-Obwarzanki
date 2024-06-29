@@ -41,23 +41,59 @@ async def authenticate_user(
     return user, None
 
 
-def create_access_token(data: dict, expires_delta: timedelta | None = None):
+def create_token(data: dict, expires_delta: timedelta):
     to_encode = data.copy()
-    if expires_delta:
-        expire = datetime.now(timezone.utc) + expires_delta
-    else:
-        expire = datetime.now(timezone.utc) + timedelta(minutes=15)
+
+    if not expires_delta:
+        raise ValueError("expires_delta must be a timedelta object.")
+
+    expire = datetime.now(timezone.utc) + expires_delta
     to_encode.update({"exp": expire})
     encoded_jwt = SecurityConfig.encode(to_encode)
 
-    return Token(access_token=encoded_jwt)
+    return encoded_jwt
 
 
-def get_new_token(user: User):
+def get_new_access_token(user: User):
     access_token_expires = timedelta(minutes=SecurityConfig.ACCESS_TOKEN_EXPIRE_MINUTES)
-    return create_access_token(
-        data={"sub": str(user.id)}, expires_delta=access_token_expires
+    return create_token(
+        data={"sub": str(user.id), "type": "access"}, expires_delta=access_token_expires
     )
+
+
+def get_new_refresh_token(user: User):
+    refresh_token_expires = timedelta(days=SecurityConfig.REFRESH_TOKEN_EXPIRE_DAYS)
+    return create_token(
+        data={"sub": str(user.id), "type": "refresh"},
+        expires_delta=refresh_token_expires,
+    )
+
+
+async def refresh_token(refresh_token: str) -> Token:
+    try:
+        payload = SecurityConfig.decode(refresh_token)
+        token_data = TokenData(payload)
+        if token_data.user_id is None:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="User ID not found in token.",
+            )
+        if token_data.type != "refresh":
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid token type.",
+            )
+
+    except InvalidTokenError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token."
+        )
+    user = await User.get(token_data.user_id)
+    if user is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="User not found."
+        )
+    return Token(token_value=get_new_access_token(user))
 
 
 async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]) -> User:
@@ -68,6 +104,11 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]) -> Use
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="User ID not found in token.",
+            )
+        if token_data.type != "access":
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid token type.",
             )
 
     except InvalidTokenError:

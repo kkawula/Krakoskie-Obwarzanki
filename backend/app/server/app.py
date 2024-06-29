@@ -10,12 +10,14 @@ from fastapi.security import OAuth2PasswordRequestForm
 from .auth.auth import (
     authenticate_user,
     get_current_user,
-    get_new_token,
+    get_new_access_token,
+    get_new_refresh_token,
     get_password_hash,
     get_user_by_username,
+    refresh_token,
 )
 from .auth.security_config import load_security_details
-from .auth.token import Token
+from .auth.token import Token, TokenResponse
 from .database import init_db
 from .models.shop import Shop, ShopWithDistance, ShopWithPosition
 from .models.user import User, UserData
@@ -127,10 +129,10 @@ async def register_user(query: UserQuery.UserRegister):
     return UserData(**user.model_dump())
 
 
-@app.post("/user/login", tags=["User"])
+@app.post("/user/login", tags=["User"], response_model=TokenResponse)
 async def login_for_access_token(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
-) -> Token:
+):
     user, error_msg = await authenticate_user(form_data.username, form_data.password)
     if not user:
         raise HTTPException(
@@ -138,8 +140,16 @@ async def login_for_access_token(
             detail=error_msg,
             headers={"WWW-Authenticate": "Bearer"},
         )
+    access_token = get_new_access_token(user)
+    refresh_token = get_new_refresh_token(user)
+    return TokenResponse(access_token=access_token, refresh_token=refresh_token)
 
-    return get_new_token(user)
+
+@app.post("/user/refresh", tags=["User"], response_model=Token)
+async def refresh_access_token(
+    refresh_token: Annotated[str, Depends(refresh_token)],
+):
+    return refresh_token
 
 
 @app.get("/user/me/", tags=["User"], response_model=UserData)
