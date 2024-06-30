@@ -1,8 +1,10 @@
 from typing import List
-from .user import User
-from pydantic import BaseModel
+
 from beanie import Document
+from pydantic import BaseModel
+
 from .shop import baseShop
+from .user import User
 
 
 class Confirmation(BaseModel):
