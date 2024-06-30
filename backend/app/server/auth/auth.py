@@ -6,7 +6,7 @@ from fastapi.security import OAuth2PasswordBearer
 from jwt.exceptions import InvalidTokenError
 from passlib.context import CryptContext
 
-from ..models.user import User, UserData
+from ..dbmodels.user import PublicUser, User
 from .security_config import SecurityConfig
 from .token import Token, TokenData
 
@@ -79,4 +79,4 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]) -> Use
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="User not found."
         )
-    return UserData(**user.model_dump())
+    return PublicUser(**user.model_dump())

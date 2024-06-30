@@ -15,3 +15,9 @@ repos:
         entry: bash -c "if [ -d client/node_modules ]; then cd client && yarn lint-staged; fi"
         pass_filenames: false
         always_run: true
+  - repo: local
+    hooks:
+      - id: test-backend
+        name: test-backend
+        language: system
+        entry: bash -c "cd backend && make test"
