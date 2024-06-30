@@ -3,9 +3,7 @@ from typing import List
 from beanie import Document
 from pydantic import BaseModel, ConfigDict
 
-
 from .seller import Seller
-from .user import User
 from .util_types import Point
 
 
