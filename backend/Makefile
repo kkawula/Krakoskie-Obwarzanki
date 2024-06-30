@@ -11,16 +11,12 @@ venv/bin/activate: requirements.txt requirements-dev.txt
 	chmod +x venv/bin/activate
 	. ./venv/bin/activate
 	make install
-	make install-dev
 
 install: requirements.txt
 	$(PIP) install -r requirements.txt --no-cache-dir
 
-install-dev: requirements-dev.txt
+dev: requirements-dev.txt .pre-commit-config.yaml
 	$(PIP) install -r requirements-dev.txt --no-cache-dir
-	make pre-commit-install
-
-pre-commit-install: .pre-commit-config.yaml
 	pre-commit install
 
 # SERVER
@@ -36,12 +32,12 @@ test: venv/bin/activate
 
 .PHONY: pre-commit
 # Run pre-commit on all files in staging area
-pre-commit: pre-commit-install
+pre-commit:
 	pre-commit run
 
 .PHONY: pre-commit-all
 # Run pre-commit on all files
-pre-commit-all: pre-commit-install
+pre-commit-all:
 	pre-commit run --all-files
 
 .PHONY: clean

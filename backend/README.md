@@ -8,13 +8,26 @@ python3 --version
 
 powinno zwrócić coś w stylu `Python 3.1x.x`
 
-### Aby uruchomić serwer wystarczy wykonać
+### Zmienne środowiskowe
+
+- Pierwszym krokiem jest uzupełnienie odpowiednich zmiennych środowiskowych oraz zmiana pliku `.env.example` na `.env`
+
+### Pobranie wymaganych bibliotek
 
 ```sh
 make server
 ```
 
-Komenda ta utworzy wirtualne środowisko, zainstaluje wymagane biblioteki (w tym pre-commit) i uruchomi serwer.
+Komenda ta utworzy wirtualne środowisko, zainstaluje wymagane biblioteki, aby uruchomić serwer.
+
+### Wersja developerska
+
+W celu wprowadzenia zmian zaleca się doinstalowanie biblioteki `pre-commit` w tym celu należy wykonać
+
+```sh
+git config --unset-all core.hooksPath
+make dev
+```
 
 Niestety środowisko aktywowane jest tylko w ramach jednej sesji terminala, w tym przypadku wykonania make. Aby korzystać z np. `pre-commit run` trzeba aktywować środowisko ręcznie.
 
@@ -51,6 +64,7 @@ pip install -r requirements.txt
 biblioteki do developmentu
 
 ```sh
+git config --unset-all core.hooksPath
 pip install -r requirements-dev.txt
 pre-commit install
 ```
@@ -92,3 +106,4 @@ Jeśli z jakiegoś powodu chcesz zrobić commit bez sprawdzania, to możesz uży
 ```sh
 git commit --no-verify -m "Wiadomość"
 ```
+
