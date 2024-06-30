@@ -3,6 +3,7 @@ from typing import List
 from beanie import Document
 from pydantic import BaseModel, ConfigDict
 
+
 from .seller import Seller
 from .user import User
 from .util_types import Point
@@ -46,14 +47,3 @@ class Shop(Document, baseShop):
             }
         }
     )
-
-
-class ShopByCommunity(Document, baseShop):
-    confirmed_by: List[User]
-    notes: List[str]
-
-    class Settings:
-        name = "shops_by_community"
-        indexes = [
-            [("location", "2dsphere")],  # GEO index
-        ]
