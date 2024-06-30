@@ -60,9 +60,7 @@ def get_new_token(user: User):
     )
 
 
-async def get_current_user(
-    token: Annotated[str, Depends(oauth2_scheme)],
-) -> User:
+async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]) -> User:
     try:
         payload = SecurityConfig.decode(token)
         token_data = TokenData(payload)
