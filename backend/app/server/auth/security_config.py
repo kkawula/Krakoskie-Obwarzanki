@@ -13,14 +13,13 @@ class SecurityConfig:
     ACCESS_TOKEN_EXPIRE_MINUTES = 15
     REFRESH_TOKEN_EXPIRE_DAYS = 30
 
-    def __new__(cls):
-        raise TypeError("SecurityConfig is a static class and cannot be instantiated")
-
+    @staticmethod
     def encode(to_encode):
         return jwt.encode(
             to_encode, SecurityConfig.SECRET_KEY, algorithm=SecurityConfig.ALGORITHM
         )
 
+    @staticmethod
     def decode(token):
         try:
             payload = jwt.decode(
@@ -33,6 +32,7 @@ class SecurityConfig:
 
         return TokenData(payload)
 
+    @staticmethod
     def validate(token):
         token_data = SecurityConfig.decode(token)
         if token_data.user_id is None:
@@ -48,22 +48,22 @@ class SecurityConfig:
 
         return token_data
 
+    @staticmethod
+    async def load_security_details():
+        secret_key = os.getenv("SECRET_KEY")
+        if not secret_key:
+            raise ValueError("You must set the SECRET_KEY environment variable")
+        SecurityConfig.SECRET_KEY = secret_key
 
-async def load_security_details():
-    secret_key = os.getenv("SECRET_KEY")
-    if not secret_key:
-        raise ValueError("You must set the SECRET_KEY environment variable")
-    SecurityConfig.SECRET_KEY = secret_key
+        algorithm = os.getenv("ALGORITHM")
+        if not algorithm:
+            raise ValueError("You must set the ALGORITHM environment variable")
+        SecurityConfig.ALGORITHM = algorithm
 
-    algorithm = os.getenv("ALGORITHM")
-    if not algorithm:
-        raise ValueError("You must set the ALGORITHM environment variable")
-    SecurityConfig.ALGORITHM = algorithm
+        access_token_expire_str = os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES")
+        if access_token_expire_str:
+            SecurityConfig.ACCESS_TOKEN_EXPIRE_MINUTES = int(access_token_expire_str)
 
-    access_token_expire_str = os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES")
-    if access_token_expire_str:
-        SecurityConfig.ACCESS_TOKEN_EXPIRE_MINUTES = int(access_token_expire_str)
-
-    refresh_token_expire_str = os.getenv("REFRESH_TOKEN_EXPIRE_DAYS")
-    if refresh_token_expire_str:
-        SecurityConfig.REFRESH_TOKEN_EXPIRE_DAYS = int(refresh_token_expire_str)
+        refresh_token_expire_str = os.getenv("REFRESH_TOKEN_EXPIRE_DAYS")
+        if refresh_token_expire_str:
+            SecurityConfig.REFRESH_TOKEN_EXPIRE_DAYS = int(refresh_token_expire_str)

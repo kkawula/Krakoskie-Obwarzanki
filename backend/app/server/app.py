@@ -16,7 +16,7 @@ from .auth.auth import (
     get_user_by_username,
     refresh_token,
 )
-from .auth.security_config import load_security_details
+from .auth.security_config import SecurityConfig
 from .auth.token import Token, TokenResponse
 from .database import init_db
 from .models.shop import Shop, ShopWithDistance, ShopWithPosition
@@ -30,7 +30,7 @@ from .query.user import UserQuery
 async def lifespan(_app: FastAPI):
     load_dotenv()
     await init_db()
-    await load_security_details()
+    await SecurityConfig.load_security_details()
     yield
 
 
