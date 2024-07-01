@@ -1,6 +1,10 @@
 import os
 
 import jwt
+from fastapi import HTTPException, status
+from jwt.exceptions import InvalidTokenError
+
+from .token import TokenData
 
 
 class SecurityConfig:
@@ -18,9 +22,31 @@ class SecurityConfig:
         )
 
     def decode(token):
-        return jwt.decode(
-            token, SecurityConfig.SECRET_KEY, algorithms=SecurityConfig.ALGORITHM
-        )
+        try:
+            payload = jwt.decode(
+                token, SecurityConfig.SECRET_KEY, algorithms=SecurityConfig.ALGORITHM
+            )
+        except InvalidTokenError:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token."
+            )
+
+        return TokenData(payload)
+
+    def validate(token):
+        token_data = SecurityConfig.decode(token)
+        if token_data.user_id is None:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="User ID not found in token.",
+            )
+        if token_data.type is None:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Token type not found in token.",
+            )
+
+        return token_data
 
 
 async def load_security_details():
@@ -35,16 +61,9 @@ async def load_security_details():
     SecurityConfig.ALGORITHM = algorithm
 
     access_token_expire_str = os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES")
-    if not access_token_expire_str:
-        raise ValueError(
-            "You must set the ACCESS_TOKEN_EXPIRE_MINUTES environment variable"
-        )
-    SecurityConfig.ACCESS_TOKEN_EXPIRE_MINUTES = int(access_token_expire_str)
+    if access_token_expire_str:
+        SecurityConfig.ACCESS_TOKEN_EXPIRE_MINUTES = int(access_token_expire_str)
 
     refresh_token_expire_str = os.getenv("REFRESH_TOKEN_EXPIRE_DAYS")
-
-    if not refresh_token_expire_str:
-        raise ValueError(
-            "You must set the REFRESH_TOKEN_EXPIRE_DAYS environment variable"
-        )
-    SecurityConfig.REFRESH_TOKEN_EXPIRE_DAYS = int(refresh_token_expire_str)
+    if refresh_token_expire_str:
+        SecurityConfig.REFRESH_TOKEN_EXPIRE_DAYS = int(refresh_token_expire_str)
