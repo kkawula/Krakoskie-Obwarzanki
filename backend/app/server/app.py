@@ -13,10 +13,9 @@ from .auth.auth import (
     get_new_access_token,
     get_new_refresh_token,
     get_password_hash,
-    get_user_by_username,
     refresh_token,
 )
-from .auth.security_config import SecurityConfig
+from .auth.jwt_encoder import JWTEncoder
 from .auth.token import Token, TokenResponse
 from .database import init_db
 from .models.shop import Shop, ShopWithDistance, ShopWithPosition
@@ -30,7 +29,7 @@ from .query.user import UserQuery
 async def lifespan(_app: FastAPI):
     load_dotenv()
     await init_db()
-    await SecurityConfig.load_security_details()
+    await JWTEncoder.load_security_details()
     yield
 
 
@@ -114,7 +113,7 @@ async def get_n_nearest_shops(query: ShopQuery.ShopsByNumber):
 
 @app.post("/user/register", tags=["User"], response_model=UserData)
 async def register_user(query: UserQuery.UserRegister):
-    existing_user = await get_user_by_username(query.username)
+    existing_user = await User.get_user(username=query.username)
     if existing_user:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
