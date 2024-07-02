@@ -5,8 +5,8 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from passlib.context import CryptContext
 
-from ..models.user import User, UserData
-from ..models.util_types import Result
+from ..dbmodels.user import PublicUser, User
+from ..dbmodels.util_types import Result
 from .jwt_encoder import JWTEncoder
 from .token import Token, TokenType
 
@@ -96,4 +96,4 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]) -> Use
 
     user = await obtain_user(token_data.user_id)
 
-    return UserData(**user.model_dump())
+    return PublicUser(**user.model_dump())

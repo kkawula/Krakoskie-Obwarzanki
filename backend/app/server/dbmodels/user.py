@@ -1,5 +1,5 @@
 from beanie import Document
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class User(Document):
@@ -7,9 +7,6 @@ class User(Document):
     hashed_password: str
     email: str | None = None
     full_name: str | None = None
-
-    class Settings:
-        name = "users"
 
     @staticmethod
     async def get_user(username: str | None = None, user_id: str | None = None):
@@ -21,8 +18,20 @@ class User(Document):
 
         return None
 
+    class Settings:
+        name = "users"
 
-class UserData(BaseModel):
+    model_config = ConfigDict(
+        json_schema_extra={
+            "example": {
+                "username": "test",
+                "password": "test",
+            }
+        }
+    )
+
+
+class PublicUser(BaseModel):
     username: str
     email: str | None = None
     full_name: str | None = None

@@ -5,6 +5,7 @@ from typing_extensions import Literal
 
 
 class Point(BaseModel):
+    # type is needed to be able to use 2d-sphere index in MongoDB
     type: Literal["Point"] = "Point"
     coordinates: Tuple[float, float]
 

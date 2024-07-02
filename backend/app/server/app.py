@@ -1,10 +1,12 @@
+import logging
 from contextlib import asynccontextmanager
 from typing import Annotated
 
 from dotenv import load_dotenv
-from fastapi import Depends, FastAPI, HTTPException, status
+from fastapi import Depends, FastAPI, HTTPException, Request, status
+from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import RedirectResponse
+from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.security import OAuth2PasswordRequestForm
 
 from .auth.auth import (
@@ -18,9 +20,10 @@ from .auth.auth import (
 from .auth.jwt_encoder import JWTEncoder
 from .auth.token import Token, TokenResponse
 from .database import init_db
-from .models.shop import Shop, ShopWithDistance, ShopWithPosition
-from .models.user import User, UserData
-from .models.util_types import Point
+from .dbmodels.shop import Shop
+from .dbmodels.user import PublicUser, User
+from .dbmodels.util_types import Point
+from .outputmodels.shop import ShopWithDistance, ShopWithPosition
 from .query.shop import ShopQuery
 from .query.user import UserQuery
 
@@ -49,6 +52,19 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    """
+    Logs which fields caused the validation error and returns a 422 response
+    """
+    exc_str = f"{exc}".replace("\n", " ").replace("   ", " ")
+    logging.error(f"{request}: {exc_str}")
+    content = {"status_code": 10422, "message": exc_str, "data": None}
+    return JSONResponse(
+        content=content, status_code=status.HTTP_422_UNPROCESSABLE_ENTITY
+    )
 
 
 @app.get("/", tags=["Root"])
@@ -111,7 +127,7 @@ async def get_n_nearest_shops(query: ShopQuery.ShopsByNumber):
     ).to_list(n)
 
 
-@app.post("/user/register", tags=["User"], response_model=UserData)
+@app.post("/user/register", tags=["User"], response_model=PublicUser)
 async def register_user(query: UserQuery.UserRegister):
     existing_user = await User.get_user(username=query.username)
     if existing_user:
@@ -125,7 +141,7 @@ async def register_user(query: UserQuery.UserRegister):
     user = User(username=query.username, hashed_password=hashed_password)
     await user.insert()
 
-    return UserData(**user.model_dump())
+    return PublicUser(**user.model_dump())
 
 
 @app.post("/user/login", tags=["User"], response_model=TokenResponse)
@@ -151,7 +167,7 @@ async def refresh_access_token(
     return refresh_token
 
 
-@app.get("/user/me/", tags=["User"], response_model=UserData)
+@app.get("/user/me/", tags=["User"], response_model=PublicUser)
 async def read_users_me(
     current_user: Annotated[User, Depends(get_current_user)],
 ):
