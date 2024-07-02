@@ -5,3 +5,4 @@ beanie==1.26.0
 certifi==2024.6.2
 passlib==1.7.4
 pyjwt==2.4.0
+bcrypt==4.0.1

@@ -16,3 +16,6 @@ class Point(BaseModel):
         if lng and lat:
             values["coordinates"] = [lng, lat]
         return values
+
+
+Result = tuple[any, str | None]
