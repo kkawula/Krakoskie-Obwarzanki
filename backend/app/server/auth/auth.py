@@ -1,4 +1,3 @@
-from datetime import datetime, timedelta, timezone
 from typing import Annotated
 
 from fastapi import Depends, HTTPException, status
@@ -44,30 +43,15 @@ async def authenticate_user(username: str, password: str) -> Result:
     return user, None
 
 
-def create_token(to_encode: dict, expires_delta: timedelta):
-    if not expires_delta:
-        raise ValueError("expires_delta must be a timedelta object.")
-
-    expire = datetime.now(timezone.utc) + expires_delta
-    to_encode.update({"exp": expire})
-    encoded_jwt = JWTEncoder.encode(to_encode)
-
-    return Token(encoded_jwt)
-
-
-def get_new_access_token(user: User):
-    access_token_expires = timedelta(minutes=JWTEncoder.ACCESS_TOKEN_EXPIRE_MINUTES)
-    return create_token(
-        to_encode={"sub": str(user.id), "type": "access"},
-        expires_delta=access_token_expires,
+def get_new_refresh_token(user: User):
+    return JWTEncoder.create_refresh_token(
+        to_encode={"sub": str(user.id), "type": "refresh"}
     )
 
 
-def get_new_refresh_token(user: User):
-    refresh_token_expires = timedelta(days=JWTEncoder.REFRESH_TOKEN_EXPIRE_DAYS)
-    return create_token(
-        to_encode={"sub": str(user.id), "type": "refresh"},
-        expires_delta=refresh_token_expires,
+def get_new_access_token(user: User):
+    return JWTEncoder.create_access_token(
+        to_encode={"sub": str(user.id), "type": "access"}
     )
 
 
