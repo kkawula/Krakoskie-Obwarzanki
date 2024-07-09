@@ -25,7 +25,6 @@ Komenda ta utworzy wirtualne środowisko, zainstaluje wymagane biblioteki, aby u
 W celu wprowadzenia zmian zaleca się doinstalowanie biblioteki `pre-commit` w tym celu należy wykonać
 
 ```sh
-git config --unset-all core.hooksPath
 make dev
 ```
 
@@ -64,7 +63,6 @@ pip install -r requirements.txt
 biblioteki do developmentu
 
 ```sh
-git config --unset-all core.hooksPath
 pip install -r requirements-dev.txt
 pre-commit install
 ```
