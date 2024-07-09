@@ -22,6 +22,12 @@ Komenda ta utworzy wirtualne środowisko, zainstaluje wymagane biblioteki, aby u
 
 ### Wersja developerska
 
+Jeśli nigdy wcześniej nie korzystałeś z hooków przed commitami, prawdopodobnie trzeba będzie wykonać poniższą komendę, aby pre-commit działał poprawnie:
+
+```sh
+git config --unset-all core.hooksPath
+```
+
 W celu wprowadzenia zmian zaleca się doinstalowanie biblioteki `pre-commit` w tym celu należy wykonać
 
 ```sh
