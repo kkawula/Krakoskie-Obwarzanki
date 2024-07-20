@@ -34,17 +34,27 @@ class JWTEncoder:
         return TokenData(payload)
 
     @staticmethod
+    def check_sufficient_scopes(token_data, scopes):
+        if not token_data.scopes:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Token scopes not found in token.",
+            )
+
+        for scope in scopes:
+            if scope not in token_data.scopes:
+                raise HTTPException(
+                    status_code=status.HTTP_401_UNAUTHORIZED,
+                    detail="Insufficient scope.",
+                )
+
+    @staticmethod
     def validate(token):
         token_data = JWTEncoder.decode(token)
         if token_data.user_id is None:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="User ID not found in token.",
-            )
-        if token_data.type is None:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Token type not found in token.",
             )
 
         return token_data
