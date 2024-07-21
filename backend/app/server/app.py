@@ -153,14 +153,14 @@ async def create_user(query: UserQuery.UserRegister):
     return user
 
 
-@app.post("/register/user", tags=["User"], response_model=PublicUser)
+@app.post("/user/register", tags=["User"], response_model=PublicUser)
 async def register_user(user: Annotated[User, Depends(create_user)]):
     user.scopes.append("user:full")
     await user.insert()
     return PublicUser(**user.model_dump())
 
 
-@app.post("/register/seller", tags=["Seller"], response_model=PublicUser)
+@app.post("/user/register_seller", tags=["Seller"], response_model=PublicUser)
 async def register_seller(user: Annotated[User, Depends(create_user)]):
     if not user.email:
         raise HTTPException(
