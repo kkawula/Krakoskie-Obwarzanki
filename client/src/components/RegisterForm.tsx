@@ -1,5 +1,6 @@
 import { Box, Button, FormControl, FormLabel, Input } from "@chakra-ui/react";
 import { useRef } from "react";
+import { sendPostRequest } from "../utils/sendPostRequest";
 
 // TODO: Add Formik library
 export default function RegisterForm() {
@@ -7,7 +8,18 @@ export default function RegisterForm() {
   const passwordRef = useRef<HTMLInputElement>(null);
   const emailRef = useRef<HTMLInputElement>(null);
 
-  const handleSubmit = () => {
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    sendPostRequest({
+      url: "/user/register",
+      data: {
+        username: usernameRef.current!.value,
+        password: passwordRef.current!.value,
+        email: emailRef.current!.value,
+      },
+    });
+
     // const username = usernameRef.current?.value;
     // const password = passwordRef.current?.value;
     // const email = emailRef.current?.value;
