@@ -1,10 +1,11 @@
 import os
+from datetime import datetime, timedelta, timezone
 
 import jwt
 from fastapi import HTTPException, status
 from jwt.exceptions import InvalidTokenError
 
-from .token import TokenData
+from .token import Token, TokenData
 
 
 class JWTEncoder:
@@ -33,6 +34,21 @@ class JWTEncoder:
         return TokenData(payload)
 
     @staticmethod
+    def check_sufficient_scopes(token_data, scopes):
+        if not token_data.scopes:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Token scopes not found in token.",
+            )
+
+        for scope in scopes:
+            if scope not in token_data.scopes:
+                raise HTTPException(
+                    status_code=status.HTTP_401_UNAUTHORIZED,
+                    detail="Insufficient scope.",
+                )
+
+    @staticmethod
     def validate(token):
         token_data = JWTEncoder.decode(token)
         if token_data.user_id is None:
@@ -40,13 +56,29 @@ class JWTEncoder:
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="User ID not found in token.",
             )
-        if token_data.type is None:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Token type not found in token.",
-            )
 
         return token_data
+
+    @staticmethod
+    def create_token(to_encode: dict, expires_delta: timedelta):
+        if not expires_delta:
+            raise ValueError("expires_delta must be a timedelta object.")
+
+        expire = datetime.now(timezone.utc) + expires_delta
+        to_encode.update({"exp": expire})
+        encoded_jwt = JWTEncoder.encode(to_encode)
+
+        return Token(encoded_jwt)
+
+    @staticmethod
+    def create_access_token(to_encode: dict):
+        access_token_expires = timedelta(minutes=JWTEncoder.ACCESS_TOKEN_EXPIRE_MINUTES)
+        return JWTEncoder.create_token(to_encode, access_token_expires)
+
+    @staticmethod
+    def create_refresh_token(to_encode: dict):
+        refresh_token_expires = timedelta(days=JWTEncoder.REFRESH_TOKEN_EXPIRE_DAYS)
+        return JWTEncoder.create_token(to_encode, refresh_token_expires)
 
     @staticmethod
     async def load_security_details():

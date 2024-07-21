@@ -30,7 +30,7 @@ class ShopWithPosition(Shop):
 
     @model_validator(mode="before")
     def set_location(cls, values: Shop | dict):
-        if type(values) == Shop:
+        if isinstance(values, Shop):
             values = values.model_dump()
 
         if "lat" not in values and "lng" not in values:

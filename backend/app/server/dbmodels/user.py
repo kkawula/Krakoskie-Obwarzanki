@@ -1,12 +1,15 @@
+from typing import List
+
 from beanie import Document
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, EmailStr
 
 
 class User(Document):
     username: str
     hashed_password: str
-    email: str | None = None
+    email: EmailStr | None = None
     full_name: str | None = None
+    scopes: List[str] = []
 
     @staticmethod
     async def get_user(username: str | None = None, user_id: str | None = None):
@@ -26,6 +29,8 @@ class User(Document):
             "example": {
                 "username": "test",
                 "password": "test",
+                "email": "example@email.com",
+                "full_name": "Test User",
             }
         }
     )
