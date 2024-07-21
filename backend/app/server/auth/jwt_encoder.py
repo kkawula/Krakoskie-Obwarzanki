@@ -77,7 +77,7 @@ class JWTEncoder:
 
     @staticmethod
     def create_refresh_token(to_encode: dict):
-        refresh_token_expires = timedelta(minutes=JWTEncoder.REFRESH_TOKEN_EXPIRE_DAYS)
+        refresh_token_expires = timedelta(days=JWTEncoder.REFRESH_TOKEN_EXPIRE_DAYS)
         return JWTEncoder.create_token(to_encode, refresh_token_expires)
 
     @staticmethod
