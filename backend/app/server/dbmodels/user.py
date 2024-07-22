@@ -1,15 +1,15 @@
 from typing import List
 
 from beanie import Document
-from pydantic import BaseModel, ConfigDict, EmailStr
+from pydantic import BaseModel, ConfigDict, EmailStr, Field
 
 
 class User(Document):
-    username: str
+    username: str = Field(min_length=4, max_length=32)
     hashed_password: str
-    email: EmailStr | None = None
-    full_name: str | None = None
-    scopes: List[str] = []
+    email: EmailStr | None = Field(default=None)
+    full_name: str | None = Field(min_length=4, max_length=128, default=None)
+    scopes: List[str] = Field(default_factory=list)
 
     @staticmethod
     async def get_user(
@@ -31,19 +31,27 @@ class User(Document):
     class Settings:
         name = "users"
 
-    model_config = ConfigDict(
-        json_schema_extra={
-            "example": {
-                "username": "test",
-                "password": "test",
-                "email": "example@email.com",
-                "full_name": "Test User",
-            }
-        }
-    )
-
 
 class PublicUser(BaseModel):
     username: str
     email: str | None = None
     full_name: str | None = None
+
+
+class UserInput(BaseModel):
+    username: str
+    password: str
+    email: EmailStr | None = None
+    name: str | None = None
+    surname: str | None = None
+
+    model_config = ConfigDict(
+        json_schema_extra={
+            "example": {
+                "username": "user",
+                "password": "password",
+                "email": "example@email.com",
+                "name": "Test User",
+            }
+        }
+    )

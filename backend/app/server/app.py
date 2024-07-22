@@ -8,6 +8,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.security import OAuth2PasswordRequestForm
+from pydantic import ValidationError
 
 from .auth.auth import (
     authenticate_user,
@@ -21,12 +22,10 @@ from .auth.jwt_encoder import JWTEncoder
 from .auth.token import Token, TokenResponse
 from .database import init_db
 from .dbmodels.seller import Seller
-from .dbmodels.shop import Shop
-from .dbmodels.user import PublicUser, User
+from .dbmodels.shop import Shop, ShopQuery
+from .dbmodels.user import PublicUser, User, UserInput
 from .dbmodels.util_types import Point
 from .outputmodels.shop import ShopWithDistance, ShopWithPosition
-from .query.shop import ShopQuery
-from .query.user import UserQuery
 
 
 @asynccontextmanager
@@ -133,7 +132,7 @@ async def get_n_nearest_shops(query: ShopQuery.ShopsByNumber):
     ).to_list(n)
 
 
-async def create_user(query: UserQuery.UserRegister):
+async def create_user(query: UserInput):
     existing_user = await User.get_user(username=query.username)
     if existing_user:
         raise HTTPException(
@@ -151,14 +150,16 @@ async def create_user(query: UserQuery.UserRegister):
 
     hashed_password = get_password_hash(query.password)
 
-    user = User(
-        username=query.username,
-        hashed_password=hashed_password,
-        email=query.email,
-        full_name=query.name,
-    )
-
-    user.scopes.append("user:full")
+    try:
+        user = User(
+            username=query.username,
+            hashed_password=hashed_password,
+            email=query.email,
+            full_name=query.name,
+            scopes=["user:full"],
+        )
+    except ValidationError as e:
+        raise HTTPException(status_code=422, detail=e.errors())
     return user
 
 
