@@ -133,7 +133,8 @@ async def get_n_nearest_shops(query: ShopQuery.ShopsByNumber):
 
 
 async def create_user(query: UserInput):
-    existing_user = await User.get_user(username=query.username)
+    username = query.username.lower()
+    existing_user = await User.get_user(username=username)
     if existing_user:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -141,7 +142,8 @@ async def create_user(query: UserInput):
         )
 
     if query.email:
-        existing_user = await User.get_user(email=query.email)
+        email = query.email.lower()
+        existing_user = await User.get_user(email=email)
         if existing_user:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
@@ -152,9 +154,9 @@ async def create_user(query: UserInput):
 
     try:
         user = User(
-            username=query.username,
+            username=username,
             hashed_password=hashed_password,
-            email=query.email,
+            email=email,
             full_name=query.name,
             scopes=["user:full"],
         )
@@ -203,7 +205,8 @@ async def register_seller(user: Annotated[User, Depends(create_user)]):
 async def login_for_access_token(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
 ) -> TokenResponse:
-    user, error_msg = await authenticate_user(form_data.username, form_data.password)
+    login = form_data.username.lower()
+    user, error_msg = await authenticate_user(login, form_data.password)
     if error_msg:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=error_msg)
 
