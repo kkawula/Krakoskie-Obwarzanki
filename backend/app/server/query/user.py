@@ -14,8 +14,7 @@ class UserQuery:
                     "username": "user",
                     "password": "password",
                     "email": "example@email.com",
-                    "name": "Test",
-                    "surname": "User",
+                    "name": "Test User",
                 }
             }
         )

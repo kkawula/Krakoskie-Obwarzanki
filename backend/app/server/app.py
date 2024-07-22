@@ -141,21 +141,29 @@ async def create_user(query: UserQuery.UserRegister):
             detail="Username already registered",
         )
 
+    if query.email:
+        existing_user = await User.get_user(email=query.email)
+        if existing_user:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Email already registered",
+            )
+
     hashed_password = get_password_hash(query.password)
 
     user = User(
         username=query.username,
         hashed_password=hashed_password,
         email=query.email,
-        full_name=query.name + " " + query.surname,
+        full_name=query.name,
     )
 
+    user.scopes.append("user:full")
     return user
 
 
 @app.post("/user/register", tags=["User"], response_model=PublicUser)
 async def register_user(user: Annotated[User, Depends(create_user)]):
-    user.scopes.append("user:full")
     await user.insert()
     return PublicUser(**user.model_dump())
 
