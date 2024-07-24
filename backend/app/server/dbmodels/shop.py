@@ -1,5 +1,7 @@
+from typing import List
+
 from beanie import Document
-from pydantic import BaseModel, ConfigDict, Field, conlist
+from pydantic import BaseModel, ConfigDict, Field
 
 from .seller import Seller
 from .util_types import Point
@@ -7,7 +9,7 @@ from .util_types import Point
 
 class baseShop(BaseModel):
     location: Point
-    flavors: conlist(item_type=str, max_length=32)
+    flavors: List[str] = Field(default_factory=list, max_items=32)
     price: float = Field(ge=0)
     card_payment: bool
 

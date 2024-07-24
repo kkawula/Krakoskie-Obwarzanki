@@ -5,7 +5,7 @@ from pydantic import BaseModel, ConfigDict, EmailStr, Field
 
 
 class User(Document):
-    username: str = Field(min_length=4, max_length=32, pattern=r"^[a-zA-Z0-9]+$")
+    username: str = Field(..., min_length=4, max_length=32, pattern=r"^[a-zA-Z0-9]+$")
     hashed_password: str
     email: EmailStr | None = Field(default=None)
     full_name: str | None = Field(min_length=4, max_length=128, default=None)
