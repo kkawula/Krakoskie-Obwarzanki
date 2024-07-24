@@ -2,6 +2,7 @@
 .ipynb_checkpoints
 .mypy_cache
 .vscode
+.vscode/*
 __pycache__
 .pytest_cache
 htmlcov
