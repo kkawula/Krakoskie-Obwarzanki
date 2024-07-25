@@ -1,3 +1,5 @@
+import toast from "react-hot-toast";
+
 export const sendPostRequest = async ({
   url,
   data,
@@ -12,9 +14,13 @@ export const sendPostRequest = async ({
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
   };
-  const response = await fetch(baseUrl + url, requestOptions);
-  if (response.status >= 400) {
-    throw new Error(`HTTP error! status: ${response.status}`);
+  try {
+    const response = await fetch(baseUrl + url, requestOptions);
+    if (response.status >= 400) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return await response.json();
+  } catch (error) {
+    toast.error(`Something went wrong. Error: ${error}`);
   }
-  return await response.json();
 };

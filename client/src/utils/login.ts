@@ -1,3 +1,5 @@
+import toast from "react-hot-toast";
+
 type Tokens = {
   access_token: string;
   refresh_token: string;
@@ -21,7 +23,7 @@ export const sendLoginData = async ({
     }),
   });
   if (response.status >= 400) {
-    throw new Error("Failed to login");
+    toast.error(`Invalid credentials ${response.statusText}`);
   }
   return await response.json();
 };
