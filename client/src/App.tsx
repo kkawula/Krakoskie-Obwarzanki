@@ -4,25 +4,25 @@ import Map from "./components/Map.tsx";
 import Widget from "./components/Widget";
 import { Toaster } from "react-hot-toast";
 import { LocationOnMapProvider } from "./context/locationContextProvider.tsx";
+import AuthProvider from "react-auth-kit/AuthProvider";
+import createStore from "react-auth-kit/createStore";
 
-export type Shop = {
-  id: string;
-  name: string;
-  lng: number;
-  lat: number;
-  card_payment: boolean;
-  flavors: string[];
-  distance: number;
-};
-
+const store = createStore({
+  authName: "_auth",
+  authType: "cookie",
+  cookieDomain: window.location.hostname,
+  cookieSecure: window.location.protocol === "https:",
+});
 function App() {
   return (
     <Center>
-      <Toaster />
-      <LocationOnMapProvider>
-        <Map />
-        <Widget />
-      </LocationOnMapProvider>
+      <AuthProvider store={store}>
+        <Toaster />
+        <LocationOnMapProvider>
+          <Map />
+          <Widget />
+        </LocationOnMapProvider>
+      </AuthProvider>
     </Center>
   );
 }

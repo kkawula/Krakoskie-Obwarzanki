@@ -1,4 +1,5 @@
 import { Flex, Heading, IconButton } from "@chakra-ui/react";
+import useIsAuthenticated from "react-auth-kit/hooks/useIsAuthenticated";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 
 type HeaderProps = {
@@ -7,10 +8,11 @@ type HeaderProps = {
 };
 
 const Header = ({ handleToggle, show }: HeaderProps) => {
+  const isAuthenticated = useIsAuthenticated();
   return (
     <Flex justify="space-between" align="center">
       <Heading as="h2" size="md">
-        Krakoskie Obwarzanki
+        Krakoskie Obwarzanki {isAuthenticated ? "Admin" : "User"}
       </Heading>
       <Flex>
         <IconButton
