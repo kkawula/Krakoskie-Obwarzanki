@@ -40,10 +40,12 @@ async def obtain_user(user_id: str):
     return user
 
 
-async def authenticate_user(username: str, password: str) -> Result:
-    user = await User.get_user(username=username)
+async def authenticate_user(login: str, password: str) -> Result:
+    user = await User.get_user(username=login)
     if not user:
-        return None, "User not found."
+        user = await User.get_user(email=login)
+        if not user:
+            return None, "User not found."
 
     hashed_password = user.hashed_password
     if not hashed_password or not verify_password(password, hashed_password):

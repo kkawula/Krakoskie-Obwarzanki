@@ -17,7 +17,6 @@ function Map() {
   const { locationOnMap } = useLocationOnMapContext();
 
   const { data: shops, isError, error } = useShopsQuery(locationOnMap);
-
   return (
     <MapContainer
       center={defaultLocation.location}
