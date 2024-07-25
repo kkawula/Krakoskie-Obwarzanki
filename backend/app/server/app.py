@@ -8,6 +8,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.security import OAuth2PasswordRequestForm
+from pydantic import ValidationError
 
 from .auth.auth import (
     authenticate_user,
@@ -21,12 +22,10 @@ from .auth.jwt_encoder import JWTEncoder
 from .auth.token import Token, TokenResponse
 from .database import init_db
 from .dbmodels.seller import Seller
-from .dbmodels.shop import Shop
-from .dbmodels.user import PublicUser, User
+from .dbmodels.shop import Shop, ShopQuery
+from .dbmodels.user import PublicUser, User, UserInput
 from .dbmodels.util_types import Point
 from .outputmodels.shop import ShopWithDistance, ShopWithPosition
-from .query.shop import ShopQuery
-from .query.user import UserQuery
 
 
 @asynccontextmanager
@@ -133,29 +132,41 @@ async def get_n_nearest_shops(query: ShopQuery.ShopsByNumber):
     ).to_list(n)
 
 
-async def create_user(query: UserQuery.UserRegister):
-    existing_user = await User.get_user(username=query.username)
+async def create_user(query: UserInput):
+    username = query.username.lower()
+    existing_user = await User.get_user(username=username)
     if existing_user:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Username already registered",
         )
 
+    if query.email:
+        email = query.email.lower()
+        existing_user = await User.get_user(email=email)
+        if existing_user:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Email already registered",
+            )
+
     hashed_password = get_password_hash(query.password)
 
-    user = User(
-        username=query.username,
-        hashed_password=hashed_password,
-        email=query.email,
-        full_name=query.name + " " + query.surname,
-    )
-
+    try:
+        user = User(
+            username=username,
+            hashed_password=hashed_password,
+            email=email,
+            full_name=query.name,
+            scopes=["user:full"],
+        )
+    except ValidationError as e:
+        raise HTTPException(status_code=422, detail=e.errors())
     return user
 
 
 @app.post("/user/register", tags=["User"], response_model=PublicUser)
 async def register_user(user: Annotated[User, Depends(create_user)]):
-    user.scopes.append("user:full")
     await user.insert()
     return PublicUser(**user.model_dump())
 
@@ -194,7 +205,8 @@ async def register_seller(user: Annotated[User, Depends(create_user)]):
 async def login_for_access_token(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
 ) -> TokenResponse:
-    user, error_msg = await authenticate_user(form_data.username, form_data.password)
+    login = form_data.username.lower()
+    user, error_msg = await authenticate_user(login, form_data.password)
     if error_msg:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=error_msg)
 

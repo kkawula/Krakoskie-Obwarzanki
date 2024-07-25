@@ -16,7 +16,7 @@ class Confirmation(BaseModel):
 
 class ShopByCommunity(Document, baseShop):
     added_by: User
-    initial_note: str
+    initial_note: str = ""
     confirmations: List[Confirmation]
 
     class Settings:
