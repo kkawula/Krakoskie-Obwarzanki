@@ -11,6 +11,7 @@ import useIsAuthenticated from "react-auth-kit/hooks/useIsAuthenticated";
 import useSignIn from "react-auth-kit/hooks/useSignIn";
 import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
+import { sendLoginData } from "../utils/login";
 
 // TODO: Add Formik library
 export default function LoginForm() {
@@ -34,24 +35,16 @@ export default function LoginForm() {
     }
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/user/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-        body: new URLSearchParams({
-          username: usernameRef.current!.value,
-          password: passwordRef.current!.value,
-        }),
+      const username = usernameRef.current!.value;
+      const password = passwordRef.current!.value;
+      const tokens = await sendLoginData({
+        login: username,
+        password: password,
       });
-      if (response.status >= 400) {
-        throw new Error("Failed to login");
-      }
-      const data = await response.json();
       if (
         signIn({
           auth: {
-            token: data.access_token,
+            token: tokens.access_token,
           },
         })
       ) {

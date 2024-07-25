@@ -1,6 +1,9 @@
 import { Box, Button, FormControl, FormLabel, Input } from "@chakra-ui/react";
 import { useRef } from "react";
 import { sendPostRequest } from "../utils/sendPostRequest";
+import useSignIn from "react-auth-kit/hooks/useSignIn";
+import { sendLoginData } from "../utils/login";
+import toast from "react-hot-toast";
 
 // TODO: Add Formik library
 export default function RegisterForm() {
@@ -8,22 +11,33 @@ export default function RegisterForm() {
   const passwordRef = useRef<HTMLInputElement>(null);
   const emailRef = useRef<HTMLInputElement>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const signIn = useSignIn();
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    sendPostRequest({
+    const username = usernameRef.current!.value;
+    const password = passwordRef.current!.value;
+    const email = emailRef.current!.value;
+    const name = usernameRef.current!.value;
+    console.log(username, password, email, name);
+    await sendPostRequest({
       url: "/user/register",
       data: {
+        name: usernameRef.current!.value,
         username: usernameRef.current!.value,
         password: passwordRef.current!.value,
         email: emailRef.current!.value,
       },
     });
-
-    // const username = usernameRef.current?.value;
-    // const password = passwordRef.current?.value;
-    // const email = emailRef.current?.value;
-    // TODO: Implement form submission logic
+    const tokens = await sendLoginData({ login: username, password: password });
+    if (
+      signIn({
+        auth: {
+          token: tokens.access_token,
+        },
+      })
+    ) {
+      toast.success("Registered in successfully");
+    }
   };
 
   return (

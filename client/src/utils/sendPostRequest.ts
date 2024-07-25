@@ -12,9 +12,9 @@ export const sendPostRequest = async ({
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
   };
-  const resp = await fetch(baseUrl + url, requestOptions);
-  if (!resp.ok) {
-    throw new Error(`HTTP error! status: ${resp.status}`);
+  const response = await fetch(baseUrl + url, requestOptions);
+  if (response.status >= 400) {
+    throw new Error(`HTTP error! status: ${response.status}`);
   }
-  return await resp.json();
+  return await response.json();
 };
