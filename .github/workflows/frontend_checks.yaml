@@ -1,6 +1,10 @@
 name: Lint and Test on Pull Request Frontend
-on: pull_request
-
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      
 defaults:
   run:
     working-directory: client

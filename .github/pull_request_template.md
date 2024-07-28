@@ -6,7 +6,7 @@
 
 ## Checklist before requesting a review
 
-- [ ] I have changed title of the PR to follow the pattern: </br>
+- [ ] I have changed the title of the PR to follow the pattern: 
 `[OBW-<ticket number>] <branch name>`
 - [ ] GH actions checks are passing.
 - [ ] There are no console.logs/prints left in the code.
