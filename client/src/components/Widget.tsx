@@ -6,6 +6,7 @@ import NavBar from "./NavBar";
 import PretzelList from "./PretzelList";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import RegisterForm from "./auth/RegisterForm";
+import Profile from "./auth/Profile";
 
 export default function Widget() {
   const [show, setShow] = useState(false);
@@ -39,14 +40,7 @@ export default function Widget() {
                 <Route path="/" element={<PretzelList />} />
                 <Route path="/login" element={<LoginForm />} />
                 <Route path="/register" element={<RegisterForm />} />
-                {/* <Route
-                  path="/profile"
-                  element={
-                    <RequireAuth fallbackPath="/login">
-                      <Profile />
-                    </RequireAuth>
-                  }
-                /> */}
+                <Route path="/profile" element={<Profile />} />
               </Routes>
             </Flex>
           </Router>

@@ -12,12 +12,10 @@ import useSignIn from "react-auth-kit/hooks/useSignIn";
 import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
 import { sendLoginData } from "../../utils/login";
-
 // TODO: Add Formik library
 export default function LoginForm() {
   const emailRef = useRef<HTMLInputElement | null>(null);
   const passwordRef = useRef<HTMLInputElement | null>(null);
-
   const signIn = useSignIn();
   const isAuthenticated = useIsAuthenticated();
   const navigate = useNavigate();
