@@ -1,9 +1,11 @@
 import { Box, Button, FormControl, FormLabel, Input } from "@chakra-ui/react";
-import { useRef } from "react";
-import { sendPostRequest } from "../utils/sendPostRequest";
+import { useEffect, useRef } from "react";
+import { sendPostRequest } from "../../utils/sendPostRequest";
 import useSignIn from "react-auth-kit/hooks/useSignIn";
-import { sendLoginData } from "../utils/login";
+import { sendLoginData } from "../../utils/login";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
+import useIsAuthenticated from "react-auth-kit/hooks/useIsAuthenticated";
 
 // TODO: Add Formik library
 export default function RegisterForm() {
@@ -12,6 +14,14 @@ export default function RegisterForm() {
   const emailRef = useRef<HTMLInputElement>(null);
 
   const signIn = useSignIn();
+  const navigate = useNavigate();
+  const isAuthenticated = useIsAuthenticated();
+  useEffect(() => {
+    if (isAuthenticated) {
+      return navigate("/");
+    }
+  }, [isAuthenticated]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const username = usernameRef.current!.value;

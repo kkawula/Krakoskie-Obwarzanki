@@ -6,24 +6,30 @@ import {
   Input,
   Text,
 } from "@chakra-ui/react";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import useIsAuthenticated from "react-auth-kit/hooks/useIsAuthenticated";
 import useSignIn from "react-auth-kit/hooks/useSignIn";
 import toast from "react-hot-toast";
-import { Link } from "react-router-dom";
-import { sendLoginData } from "../utils/login";
+import { Link, useNavigate } from "react-router-dom";
+import { sendLoginData } from "../../utils/login";
 
 // TODO: Add Formik library
 export default function LoginForm() {
-  const usernameRef = useRef<HTMLInputElement | null>(null);
+  const emailRef = useRef<HTMLInputElement | null>(null);
   const passwordRef = useRef<HTMLInputElement | null>(null);
 
   const signIn = useSignIn();
   const isAuthenticated = useIsAuthenticated();
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (isAuthenticated) {
+      return navigate("/");
+    }
+  }, [isAuthenticated]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const emailValue = usernameRef.current?.value;
+    const emailValue = emailRef.current?.value;
     if (!emailValue) {
       console.error("Email is required");
       return;
@@ -35,10 +41,10 @@ export default function LoginForm() {
     }
 
     try {
-      const username = usernameRef.current!.value;
+      const email = emailRef.current!.value;
       const password = passwordRef.current!.value;
       const tokens = await sendLoginData({
-        login: username,
+        login: email,
         password: password,
       });
       if (
@@ -70,9 +76,9 @@ export default function LoginForm() {
       borderRadius="md"
       width="300px"
     >
-      <FormControl id="username" isRequired>
-        <FormLabel>Username</FormLabel>
-        <Input type="text" ref={usernameRef} />
+      <FormControl id="email" isRequired>
+        <FormLabel>Email</FormLabel>
+        <Input type="text" ref={emailRef} />
       </FormControl>
       <FormControl id="password" isRequired mt="4">
         <FormLabel>Hasło</FormLabel>

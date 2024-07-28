@@ -1,15 +1,14 @@
 import { useState } from "react";
 import { Box, Collapse, Flex } from "@chakra-ui/react";
 import Header from "./Header";
-import LoginForm from "./LoginForm";
+import LoginForm from "./auth/LoginForm";
 import NavBar from "./NavBar";
 import PretzelList from "./PretzelList";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import RegisterForm from "./RegisterForm";
+import RegisterForm from "./auth/RegisterForm";
 
 export default function Widget() {
   const [show, setShow] = useState(false);
-
   return (
     <Box
       position="absolute"
@@ -40,6 +39,14 @@ export default function Widget() {
                 <Route path="/" element={<PretzelList />} />
                 <Route path="/login" element={<LoginForm />} />
                 <Route path="/register" element={<RegisterForm />} />
+                {/* <Route
+                  path="/profile"
+                  element={
+                    <RequireAuth fallbackPath="/login">
+                      <Profile />
+                    </RequireAuth>
+                  }
+                /> */}
               </Routes>
             </Flex>
           </Router>
