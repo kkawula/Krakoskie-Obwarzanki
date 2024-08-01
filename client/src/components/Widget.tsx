@@ -7,6 +7,7 @@ import PretzelList from "./PretzelList";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import RegisterForm from "./auth/RegisterForm";
 import Profile from "./auth/Profile";
+import SecuredRoute from "./auth/SecuredRoute";
 
 export default function Widget() {
   const [show, setShow] = useState(false);
@@ -40,7 +41,14 @@ export default function Widget() {
                 <Route path="/" element={<PretzelList />} />
                 <Route path="/login" element={<LoginForm />} />
                 <Route path="/register" element={<RegisterForm />} />
-                <Route path="/profile" element={<Profile />} />
+                <Route
+                  path="/profile"
+                  element={
+                    <SecuredRoute>
+                      <Profile />
+                    </SecuredRoute>
+                  }
+                />
               </Routes>
             </Flex>
           </Router>
