@@ -1,7 +1,7 @@
 import { LatLngLiteral } from "leaflet";
 import {
   Dispatch,
-  PropsWithChildren,
+  ReactNode,
   SetStateAction,
   createContext,
   useContext,
@@ -26,7 +26,7 @@ const LocationOnMapContext = createContext<{
   setLocationOnMap: () => {},
 });
 
-export function LocationOnMapProvider({ children }: PropsWithChildren) {
+export function LocationOnMapProvider({ children }: { children: ReactNode }) {
   const [locationOnMap, setLocationOnMap] = useState(defaultLocation);
 
   return (

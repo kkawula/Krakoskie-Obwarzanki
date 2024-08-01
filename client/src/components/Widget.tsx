@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { Box, Collapse, Flex } from "@chakra-ui/react";
 import Header from "./Header";
-import LoginForm from "./auth/LoginForm";
 import NavBar from "./NavBar";
 import PretzelList from "./PretzelList";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import RegisterForm from "./auth/RegisterForm";
 import Profile from "./auth/Profile";
 import SecuredRoute from "./auth/SecuredRoute";
+import LoginForm from "./auth/LoginForm";
 
 export default function Widget() {
   const [show, setShow] = useState(false);

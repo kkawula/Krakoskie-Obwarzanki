@@ -6,6 +6,7 @@ import { Toaster } from "react-hot-toast";
 import { LocationOnMapProvider } from "./context/locationContextProvider.tsx";
 import AuthProvider from "react-auth-kit/AuthProvider";
 import createStore from "react-auth-kit/createStore";
+import UserAvatar from "./components/auth/UserAvatar.tsx";
 
 const store = createStore({
   authName: "_auth",
@@ -19,6 +20,7 @@ function App() {
       <AuthProvider store={store}>
         <Toaster />
         <LocationOnMapProvider>
+          <UserAvatar />
           <Map />
           <Widget />
         </LocationOnMapProvider>

@@ -1,11 +1,11 @@
 import { Box, Button, FormControl, FormLabel, Input } from "@chakra-ui/react";
 import { useEffect, useRef } from "react";
-import { sendPostRequest } from "../../utils/sendPostRequest";
 import useSignIn from "react-auth-kit/hooks/useSignIn";
-import { sendLoginData } from "../../utils/login";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import useIsAuthenticated from "react-auth-kit/hooks/useIsAuthenticated";
+import { sendLoginData } from "src/utils/login";
+import { sendPostRequest } from "src/utils/sendPostRequest";
 
 // TODO: Add Formik library
 export default function RegisterForm() {
