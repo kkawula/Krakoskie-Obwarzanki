@@ -6,12 +6,12 @@ import {
   ZoomControl,
 } from "react-leaflet";
 import LocationMarker, { customIcon } from "./LocationMarker";
-import { useShopsQuery } from "../hooks/useShopsQuery";
 import { Alert, AlertDescription, AlertTitle } from "@chakra-ui/react";
 import {
-  defaultLocation,
   useLocationOnMapContext,
-} from "../context/locationContextProvider";
+  defaultLocation,
+} from "src/context/locationContextProvider";
+import { useShopsQuery } from "src/hooks/useShopsQuery";
 
 function Map() {
   const { locationOnMap } = useLocationOnMapContext();

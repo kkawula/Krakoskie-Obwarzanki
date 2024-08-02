@@ -20,8 +20,8 @@ import {
 import { useRef, useState } from "react";
 import { SingleDatepicker } from "chakra-dayzed-datepicker";
 import { type LatLngLiteral } from "leaflet";
-import { Time, prettyTime } from "../utils/time";
-import { useAddShopMutation } from "../hooks/useShopsQuery";
+import { useAddShopMutation } from "src/hooks/useShopsQuery";
+import { Time, prettyTime } from "src/utils/time";
 
 export type NewShop = {
   lat: number;

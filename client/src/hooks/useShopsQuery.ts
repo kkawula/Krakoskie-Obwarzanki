@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Shop } from "../App";
 import { NewShop } from "../components/NewShopForm";
 import { LocationOnMap } from "../context/locationContextProvider";
+import { Shop } from "../types";
 import { sendPostRequest } from "../utils/sendPostRequest";
 
 const fetchSellersWithinRadius = ({ location, radius }: LocationOnMap) =>

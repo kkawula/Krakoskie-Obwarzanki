@@ -1,8 +1,8 @@
 import { Box, Text, Flex, Badge } from "@chakra-ui/react";
 import { useEffect } from "react";
-import { useShopsQuery } from "../hooks/useShopsQuery";
 import toast from "react-hot-toast";
-import { useLocationOnMapContext } from "../context/locationContextProvider";
+import { useLocationOnMapContext } from "src/context/locationContextProvider";
+import { useShopsQuery } from "src/hooks/useShopsQuery";
 
 enum Flavor {
   Ser = "Ser",
